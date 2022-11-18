@@ -3,10 +3,10 @@ import { useState } from "react";
 
 
 const testNotes = [
-  {content:"Test Note 1", id:1},
-  {content:"Test Note 2", id:2},
-  {content:"Test Note 3", id:3},
-  {content:"Test Note 4", id:4}
+  {content:"Test Note 1", id:1, important:true},
+  {content:"Test Note 2", id:2, important:false},
+  {content:"Test Note 3", id:3, important:true},
+  {content:"Test Note 4", id:4, important:false},
 ]
 
 function App() {
@@ -26,7 +26,8 @@ function App() {
     event.preventDefault();
     const noteToAdd = {
       content: noteText,
-      id: generateNewID()
+      id: generateNewID(),
+      important: false
     } 
     setNotes(notes.concat(noteToAdd));
   }
