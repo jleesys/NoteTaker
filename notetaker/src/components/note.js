@@ -1,9 +1,10 @@
-const note = ({content}) => {
+const Note = ({note}) => {
     return (
-        <>
-            lol ${content}
-        </>
+        <div>
+            {note.content}&nbsp;
+            <button>{note.important ? 'Mark unimportant' : 'Mark important'}</button>
+        </div>
     )
 }
 
-export default note;
+export default Note;

@@ -1,12 +1,12 @@
-import note from "./components/note";
+import Note from "./components/note";
 import { useState } from "react";
 
 
 const testNotes = [
-  {content:"Test Note 1", id:1, important:true},
-  {content:"Test Note 2", id:2, important:false},
-  {content:"Test Note 3", id:3, important:true},
-  {content:"Test Note 4", id:4, important:false},
+  { content: "Test Note 1", id: 1, important: true },
+  { content: "Test Note 2", id: 2, important: false },
+  { content: "Test Note 3", id: 3, important: true },
+  { content: "Test Note 4", id: 4, important: false },
 ]
 
 function App() {
@@ -15,12 +15,12 @@ function App() {
   window.notes = notes;
 
   const generateNewID = () => {
-    return (Math.max(...notes.map(note => note.id))+1);
+    return (Math.max(...notes.map(note => note.id)) + 1);
   }
 
   const handleNoteInput = (event) => {
     setNoteText(event.target.value);
-  } 
+  }
 
   const handleNoteSubmission = (event) => {
     event.preventDefault();
@@ -28,8 +28,12 @@ function App() {
       content: noteText,
       id: generateNewID(),
       important: false
-    } 
+    }
     setNotes(notes.concat(noteToAdd));
+  }
+
+  const toggleImportance = (event) => {
+    event.preventDefault();
   }
 
   return (
@@ -43,7 +47,7 @@ function App() {
         </div>
       </form>
       <h2>Notes</h2>
-      {notes.map(note => <div key={note.id}>{note.content}</div>)}
+      {notes.map(note => <Note note={note} key={note.id} />)}
     </div>
   );
 }
