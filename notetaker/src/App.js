@@ -1,5 +1,5 @@
 import Note from "./components/note";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 
 const testNotes = [
@@ -12,6 +12,8 @@ const testNotes = [
 function App() {
   const [notes, setNotes] = useState(testNotes);
   const [noteText, setNoteText] = useState("");
+  const [showAll, setShowAll] = useState(true);
+  const [notesToShow, setNotesToShow] = useState(notes);
   window.notes = notes;
 
   const generateNewID = () => {
@@ -41,7 +43,19 @@ function App() {
     setNotes(
       notes.map(existingNote => existingNote.id !== id ? existingNote : newNote)
     )
+    setNotesToShow(notes);
     console.log('Importance changed')
+  }
+
+  useEffect(() => {
+    console.log('using effect hook...')
+    setNotesToShow(showAll ? notes : notes.filter(note => note.important))
+  },[notes,showAll])
+
+  const handleShowAll = () => {
+    setShowAll(!showAll); 
+    if (showAll) setNotesToShow(notes);
+    else setNotesToShow(notes.filter(note => note.important));
   }
 
   return (
@@ -55,7 +69,8 @@ function App() {
         </div>
       </form>
       <h2>Notes</h2>
-      {notes.map(note => <Note note={note} toggleImportance={() => toggleImportance(note.id)} key={note.id} />)}
+      <button onClick={() => handleShowAll()}>Show important only</button>
+      {notesToShow.map(note => <Note note={note} toggleImportance={() => toggleImportance(note.id)} key={note.id} />)}
     </div>
   );
 }
