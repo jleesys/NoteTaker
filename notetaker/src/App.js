@@ -3,10 +3,10 @@ import { useState } from "react";
 
 
 const testNotes = [
-  {content:"Test Note 1"},
-  {content:"Test Note 2"},
-  {content:"Test Note 3"},
-  {content:"Test Note 4"}
+  {content:"Test Note 1", id:1},
+  {content:"Test Note 2", id:2},
+  {content:"Test Note 3", id:3},
+  {content:"Test Note 4", id:4}
 ]
 
 function App() {
@@ -14,13 +14,19 @@ function App() {
   const [noteText, setNoteText] = useState("");
   window.notes = notes;
 
+  const generateNewID = () => {
+    return (Math.max(...notes.map(note => note.id))+1);
+  }
+
   const handleNoteInput = (event) => {
     setNoteText(event.target.value);
   } 
+
   const handleNoteSubmission = (event) => {
     event.preventDefault();
     const noteToAdd = {
-      content: noteText
+      content: noteText,
+      id: generateNewID()
     } 
     setNotes(notes.concat(noteToAdd));
   }
@@ -36,7 +42,7 @@ function App() {
         </div>
       </form>
       <h2>Notes</h2>
-      {notes.map(note => <div>{note.content}</div>)}
+      {notes.map(note => <div key={note.id}>{note.content}</div>)}
     </div>
   );
 }
