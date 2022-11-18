@@ -54,8 +54,6 @@ function App() {
 
   const handleShowAll = () => {
     setShowAll(!showAll); 
-    // if (showAll) setNotesToShow(notes);
-    // else setNotesToShow(notes.filter(note => note.important));
   }
 
   return (
