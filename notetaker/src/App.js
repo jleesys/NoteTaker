@@ -32,8 +32,16 @@ function App() {
     setNotes(notes.concat(noteToAdd));
   }
 
-  const toggleImportance = (event) => {
-    event.preventDefault();
+  const toggleImportance = (id) => {
+    console.log('Changing importance')
+    const noteToChange = notes.find(note => note.id === id);
+    const newNote = {
+      ...noteToChange, important: !noteToChange.important
+    }
+    setNotes(
+      notes.map(existingNote => existingNote.id !== id ? existingNote : newNote)
+    )
+    console.log('Importance changed')
   }
 
   return (
@@ -47,7 +55,7 @@ function App() {
         </div>
       </form>
       <h2>Notes</h2>
-      {notes.map(note => <Note note={note} key={note.id} />)}
+      {notes.map(note => <Note note={note} toggleImportance={() => toggleImportance(note.id)} key={note.id} />)}
     </div>
   );
 }
