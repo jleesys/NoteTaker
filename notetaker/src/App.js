@@ -12,7 +12,6 @@ const testNotes = [
 function App() {
   const [notes, setNotes] = useState(testNotes);
   const [noteText, setNoteText] = useState("");
-  const [finalNote, setFinalNote] = useState("");
   window.notes = notes;
 
   const handleNoteInput = (event) => {
