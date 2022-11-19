@@ -45,6 +45,9 @@ function App() {
       date: new Date().toISOString()
     }
     setNotes(notes.concat(noteToAdd));
+    axios 
+      .post(`http://localhost:3001/notes`,noteToAdd)
+      .then(response => console.log('note added to db'))
     setNoteText("");
   }
 
@@ -58,7 +61,11 @@ function App() {
       notes.map(existingNote => existingNote.id !== id ? existingNote : newNote)
     )
     setNotesToShow(notes);
-    console.log('Importance changed')
+
+    axios
+      .put(`http://localhost:3001/notes/${id}`, newNote)
+      .then(response => console.log('Importance changed in the DB'))
+    // console.log('Importance changed')
   }
 
 
