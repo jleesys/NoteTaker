@@ -1,8 +1,13 @@
 const express = require('express')
+const app = express();
 require('dotenv').config()
 
-const app = express();
 const PORT = process.env.PORT;
+
+app.get(`/`, (request,response) => {
+    response.json(`<h1>Hello</h1>`)
+})
+
 
 app.listen(PORT, (err) => {
     if (!err) {
