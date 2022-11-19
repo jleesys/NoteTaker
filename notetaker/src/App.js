@@ -75,7 +75,12 @@ function App() {
   }
 
   const deleteNote = (id) => {
-    notesServices.remove(id);
+    notesServices.remove(id)
+      .catch(err => {
+        setMessage("Error: Note has already been deleted.")
+        setTimeout(() => setMessage(null), 5000);
+        return;
+      });
     setNotes(notes.filter(note => note.id !== id));
     setMessage("Note has been deleted!")
     setTimeout(() => setMessage(null), 5000)
