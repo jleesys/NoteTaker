@@ -27,12 +27,6 @@ function App() {
         setNotes(response)
         setNotesToShow(response)
       })
-    // axios
-    //   .get(`http://localhost:3001/notes`)
-    //   .then(response => {
-    //     setNotes(response.data);
-    //     setNotesToShow(response.data);
-  // })
 }, [])
 
 const generateNewID = () => {
@@ -55,9 +49,6 @@ const handleNoteSubmission = (event) => {
 
   notesServices
     .postNew(noteToAdd)
-  // axios 
-  //   .post(`http://localhost:3001/notes`,noteToAdd)
-  //   .then(response => console.log('note added to db'))
   setNoteText("");
 }
 
@@ -73,12 +64,11 @@ const toggleImportance = (id) => {
   setNotesToShow(notes);
 
   notesServices.putUpdate(newNote,id).catch(err => console.log('oopsy woopsy', err));
-  // axios
-  //   .put(`http://localhost:3001/notes/${id}`, newNote)
-  //   .then(response => console.log('Importance changed in the DB'))
-  // console.log('Importance changed')
 }
 
+const deleteNote = (id) => {
+  console.log(`note deletion of id ${id}`)
+}
 
 useEffect(() => {
   console.log('using effect hook...')
@@ -101,7 +91,7 @@ return (
     </form>
     <h2>Notes</h2>
     <button onClick={() => handleShowAll()}>{showAll ? 'Show important only' : 'Show All'}</button>
-    {notesToShow.map(note => <Note note={note} toggleImportance={() => toggleImportance(note.id)} key={note.id} />)}
+    {notesToShow.map(note => <Note note={note} deleteNote={() => deleteNote(note.id)} toggleImportance={() => toggleImportance(note.id)} key={note.id} />)}
   </div>
 );
 }
