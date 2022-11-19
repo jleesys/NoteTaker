@@ -1,13 +1,28 @@
 {
     "notes": [
         {
-            "content": "Test Note 1", "id": 1, "important": true, "date": "2022-11-19T00:08:45.805Z"
+            "content": "Test Note 1",
+            "id": 1,
+            "important": true,
+            "date": "2022-11-19T00:08:45.805Z"
         },
-        { "content": "Test Note 2", "id": 2, "important": false, "date": "2022-11-19T00:08:45.805Z"
+        {
+            "content": "Test Note 2",
+            "id": 2,
+            "important": false,
+            "date": "2022-11-19T00:08:45.805Z"
         },
-        { "content": "Test Note 3", "id": 3, "important": true, "date": "2022-11-19T00:08:45.805Z"
+        {
+            "content": "Test Note 3",
+            "id": 3,
+            "important": true,
+            "date": "2022-11-19T00:08:45.805Z"
         },
-        { "content": "Test Note 4", "id": 4, "important": false, "date": "2022-11-19T00:08:45.805Z"
+        {
+            "content": "Test Note 4",
+            "id": 4,
+            "important": false,
+            "date": "2022-11-19T00:08:45.805Z"
         }
     ]
 }
