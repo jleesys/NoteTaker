@@ -75,8 +75,11 @@ app.post(`/api/notes`, (request, response) => {
     response.json(noteToAdd);
 })
 
-app.put(`/api/notes`, (request, response) => {
+app.put(`/api/notes/:id`, (request, response) => {
     const id = request.body.id;
+    if (id !== Number(request.params['id'])) {
+        return response.status(400).json({"error":"bad request, invalid id"})
+    }
     if (!temporaryNotes.find(note => note.id === id)) {
         return response.status(400).json({"error":"id does not exist"})
     }
