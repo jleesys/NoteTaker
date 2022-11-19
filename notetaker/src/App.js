@@ -19,7 +19,7 @@ function App() {
   const [noteText, setNoteText] = useState("");
   const [showAll, setShowAll] = useState(true);
   const [notesToShow, setNotesToShow] = useState(notes);
-  const [message, setMessage] = useState('');
+  const [message, setMessage] = useState(null);
   window.notes = notes;
   window.message = message;
 
@@ -43,6 +43,12 @@ function App() {
 
   const handleNoteSubmission = (event) => {
     event.preventDefault();
+    if (noteText == "" || noteText == null) {
+      setMessage('Error: Cannot enter blank note. Try again.')
+      setTimeout(() => setMessage(null),5000)
+      console.log('invalid entry')
+      return
+    }
     const noteToAdd = {
       content: noteText,
       id: generateNewID(),
@@ -87,7 +93,7 @@ function App() {
   }
 
   useEffect(() => {
-    console.log('using effect hook...')
+    // console.log('using effect hook...')
     setNotesToShow(showAll ? notes : notes.filter(note => note.important))
   }, [notes, showAll])
 
@@ -99,7 +105,7 @@ function App() {
     <div>
       <h1>Note Taker</h1>
       <h2>Add Notes</h2>
-      <Notification message={message}/>
+      <Notification message={message} />
       <form onSubmit={handleNoteSubmission}>
         <input onChange={handleNoteInput} value={noteText} placeholder="Enter note here"></input>
         <div>
@@ -108,9 +114,7 @@ function App() {
       </form>
       <h2>Notes</h2>
       <button onClick={() => handleShowAll()}>{showAll ? 'Show important only' : 'Show All'}</button>
-      <ul>
       {notesToShow.map(note => <Note note={note} deleteNote={() => deleteNote(note.id)} toggleImportance={() => toggleImportance(note.id)} key={note.id} />)}
-</ul>
     </div>
   );
 }
