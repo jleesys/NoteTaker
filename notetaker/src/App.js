@@ -3,10 +3,10 @@ import { useEffect, useState } from "react";
 
 
 const testNotes = [
-  { content: "Test Note 1", id: 1, important: true },
-  { content: "Test Note 2", id: 2, important: false },
-  { content: "Test Note 3", id: 3, important: true },
-  { content: "Test Note 4", id: 4, important: false },
+  { content: "Test Note 1", id: 1, important: true, date: new Date().toISOString() },
+  { content: "Test Note 2", id: 2, important: false, date: new Date().toISOString() },
+  { content: "Test Note 3", id: 3, important: true, date: new Date().toISOString() },
+  { content: "Test Note 4", id: 4, important: false, date: new Date().toISOString() },
 ]
 
 function App() {
@@ -29,7 +29,8 @@ function App() {
     const noteToAdd = {
       content: noteText,
       id: generateNewID(),
-      important: false
+      important: false,
+      date: new Date().toISOString()
     }
     setNotes(notes.concat(noteToAdd));
     setNoteText("");
