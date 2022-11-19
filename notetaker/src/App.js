@@ -32,6 +32,7 @@ function App() {
       important: false
     }
     setNotes(notes.concat(noteToAdd));
+    setNoteText("");
   }
 
   const toggleImportance = (id) => {
@@ -61,7 +62,7 @@ function App() {
       <h1>Note Taker</h1>
       <h2>Add Notes</h2>
       <form onSubmit={handleNoteSubmission}>
-        <input onChange={handleNoteInput} placeholder="Enter note here"></input>
+        <input onChange={handleNoteInput} value={noteText} placeholder="Enter note here"></input>
         <div>
           <button type="submit">Submit Note</button>
         </div>
