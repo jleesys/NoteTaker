@@ -26,4 +26,10 @@ const putUpdate = (newObject, id) => {
     return request;
 }
 
-export default { getAll, postNew, putUpdate }
+const remove = (id) => {
+    console.log(`removing object id ${id}`)
+    const request = axios
+        .delete(`${url}/${id}`)
+    return request;
+}
+export default { getAll, postNew, putUpdate, remove }

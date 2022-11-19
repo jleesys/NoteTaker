@@ -2,6 +2,7 @@ import Note from "./components/note";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import notesServices from './services/notesServ'
+import notesServ from "./services/notesServ";
 
 
 // const testNotes = [
@@ -27,73 +28,76 @@ function App() {
         setNotes(response)
         setNotesToShow(response)
       })
-}, [])
+  }, [])
 
-const generateNewID = () => {
-  return (Math.max(...notes.map(note => note.id)) + 1);
-}
-
-const handleNoteInput = (event) => {
-  setNoteText(event.target.value);
-}
-
-const handleNoteSubmission = (event) => {
-  event.preventDefault();
-  const noteToAdd = {
-    content: noteText,
-    id: generateNewID(),
-    important: false,
-    date: new Date().toISOString()
+  const generateNewID = () => {
+    return (Math.max(...notes.map(note => note.id)) + 1);
   }
-  setNotes(notes.concat(noteToAdd));
 
-  notesServices
-    .postNew(noteToAdd)
-  setNoteText("");
-}
-
-const toggleImportance = (id) => {
-  console.log('Changing importance')
-  const noteToChange = notes.find(note => note.id === id);
-  const newNote = {
-    ...noteToChange, important: !noteToChange.important
+  const handleNoteInput = (event) => {
+    setNoteText(event.target.value);
   }
-  setNotes(
-    notes.map(existingNote => existingNote.id !== id ? existingNote : newNote)
-  )
-  setNotesToShow(notes);
 
-  notesServices.putUpdate(newNote,id).catch(err => console.log('oopsy woopsy', err));
-}
+  const handleNoteSubmission = (event) => {
+    event.preventDefault();
+    const noteToAdd = {
+      content: noteText,
+      id: generateNewID(),
+      important: false,
+      date: new Date().toISOString()
+    }
+    setNotes(notes.concat(noteToAdd));
 
-const deleteNote = (id) => {
-  console.log(`note deletion of id ${id}`)
-}
+    notesServices
+      .postNew(noteToAdd)
+    setNoteText("");
+  }
 
-useEffect(() => {
-  console.log('using effect hook...')
-  setNotesToShow(showAll ? notes : notes.filter(note => note.important))
-}, [notes, showAll])
+  const toggleImportance = (id) => {
+    console.log('Changing importance')
+    const noteToChange = notes.find(note => note.id === id);
+    const newNote = {
+      ...noteToChange, important: !noteToChange.important
+    }
+    setNotes(
+      notes.map(existingNote => existingNote.id !== id ? existingNote : newNote)
+    )
+    setNotesToShow(notes);
 
-const handleShowAll = () => {
-  setShowAll(!showAll);
-}
+    notesServices.putUpdate(newNote, id).catch(err => console.log('oopsy woopsy', err));
+  }
 
-return (
-  <div>
-    <h1>Note Taker</h1>
-    <h2>Add Notes</h2>
-    <form onSubmit={handleNoteSubmission}>
-      <input onChange={handleNoteInput} value={noteText} placeholder="Enter note here"></input>
-      <div>
-        <button type="submit">Submit Note</button>
-      </div>
-    </form>
-    <h2>Notes</h2>
-    <button onClick={() => handleShowAll()}>{showAll ? 'Show important only' : 'Show All'}</button>
-    {notesToShow.map(note => <Note note={note} deleteNote={() => deleteNote(note.id)} toggleImportance={() => toggleImportance(note.id)} key={note.id} />)}
-  </div>
-);
+  const deleteNote = (id) => {
+    notesServices.remove(id);
+    setNotes(notes.filter(note => note.id !== id));
+  }
+
+  useEffect(() => {
+    console.log('using effect hook...')
+    setNotesToShow(showAll ? notes : notes.filter(note => note.important))
+  }, [notes, showAll])
+
+  const handleShowAll = () => {
+    setShowAll(!showAll);
+  }
+
+  return (
+    <div>
+      <h1>Note Taker</h1>
+      <h2>Add Notes</h2>
+      <form onSubmit={handleNoteSubmission}>
+        <input onChange={handleNoteInput} value={noteText} placeholder="Enter note here"></input>
+        <div>
+          <button type="submit">Submit Note</button>
+        </div>
+      </form>
+      <h2>Notes</h2>
+      <button onClick={() => handleShowAll()}>{showAll ? 'Show important only' : 'Show All'}</button>
+      <ul>
+        {notesToShow.map(note => <Note note={note} deleteNote={() => deleteNote(note.id)} toggleImportance={() => toggleImportance(note.id)} key={note.id} />)}
+      </ul>
+    </div>
+  );
 }
 
 export default App;
