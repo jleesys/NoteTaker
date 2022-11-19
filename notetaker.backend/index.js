@@ -98,6 +98,17 @@ app.put(`/api/notes/:id`, (request, response) => {
     response.json(request.body)
 })
 
+app.delete(`/api/notes/:id`, (request, response) => {
+    const id = Number(request.params.id);
+    console.log(typeof id, id)
+    if (!temporaryNotes.find(note => note.id === id)) {
+        response.status(400).json({"error":"id does not exist"})
+    }
+
+    temporaryNotes = temporaryNotes.filter(note => note.id !== id);
+    response.status(200).end();
+})
+
 app.listen(PORT, (err) => {
     if (!err) {
         console.log(`App started on port ${PORT}`)
