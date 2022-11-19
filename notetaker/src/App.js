@@ -52,6 +52,9 @@ const handleNoteSubmission = (event) => {
     date: new Date().toISOString()
   }
   setNotes(notes.concat(noteToAdd));
+
+  notesServices
+    .postNew(noteToAdd)
   // axios 
   //   .post(`http://localhost:3001/notes`,noteToAdd)
   //   .then(response => console.log('note added to db'))

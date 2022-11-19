@@ -9,4 +9,11 @@ const getAll = () => {
     return request;
 }
 
-export default { getAll }
+const postNew = (newObject) => {
+    const request = axios  
+        .post(url, newObject)
+        .then(response => response.data)
+    return request;
+}
+
+export default { getAll, postNew }
