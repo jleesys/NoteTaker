@@ -77,6 +77,9 @@ app.post(`/api/notes`, (request, response) => {
 
 app.put(`/api/notes`, (request, response) => {
     const id = request.body.id;
+    if (!temporaryNotes.find(note => note.id === id)) {
+        response.status(400).json({"error":"id does not exist"})
+    }
     const updatedNote = {
         id: request.body.id,
         content: request.body.content,
