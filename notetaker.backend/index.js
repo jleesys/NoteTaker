@@ -61,7 +61,7 @@ app.get(`/api/notes/:id`, (request, response) => {
 app.post(`/api/notes`, (request, response) => {
     console.log(request.body);
     if (!request.body || !request.body.content) {
-        response.json({"error":"incorrect/missing parameters"});
+        return response.status(400).json({"error":"incorrect/missing parameters"});
     }
     const noteToAdd = {
         id: generateID(),
@@ -78,7 +78,10 @@ app.post(`/api/notes`, (request, response) => {
 app.put(`/api/notes`, (request, response) => {
     const id = request.body.id;
     if (!temporaryNotes.find(note => note.id === id)) {
-        response.status(400).json({"error":"id does not exist"})
+        return response.status(400).json({"error":"id does not exist"})
+    }
+    if (!request.body || !request.body.content) {
+        return response.status(400).json({"error":"incorrect/missing parameters"});
     }
     const updatedNote = {
         id: request.body.id,
