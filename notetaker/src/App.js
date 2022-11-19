@@ -1,20 +1,32 @@
 import Note from "./components/note";
 import { useEffect, useState } from "react";
+import axios from "axios";
 
 
-const testNotes = [
-  { content: "Test Note 1", id: 1, important: true, date: new Date().toISOString() },
-  { content: "Test Note 2", id: 2, important: false, date: new Date().toISOString() },
-  { content: "Test Note 3", id: 3, important: true, date: new Date().toISOString() },
-  { content: "Test Note 4", id: 4, important: false, date: new Date().toISOString() },
-]
+// const testNotes = [
+//   { content: "Test Note 1", id: 1, important: true, date: new Date().toISOString() },
+//   { content: "Test Note 2", id: 2, important: false, date: new Date().toISOString() },
+//   { content: "Test Note 3", id: 3, important: true, date: new Date().toISOString() },
+//   { content: "Test Note 4", id: 4, important: false, date: new Date().toISOString() },
+// ]
 
 function App() {
-  const [notes, setNotes] = useState(testNotes);
+  // const [notes, setNotes] = useState(testNotes);
+  const [notes, setNotes] = useState([]);
   const [noteText, setNoteText] = useState("");
   const [showAll, setShowAll] = useState(true);
   const [notesToShow, setNotesToShow] = useState(notes);
   window.notes = notes;
+  
+  useEffect(() => {
+    console.log('effect')
+    axios
+      .get(`http://localhost:3001/notes`)
+      .then(response => {
+        setNotes(response.data);
+        setNotesToShow(response.data);
+      })
+  },[])
 
   const generateNewID = () => {
     return (Math.max(...notes.map(note => note.id)) + 1);
@@ -48,6 +60,7 @@ function App() {
     setNotesToShow(notes);
     console.log('Importance changed')
   }
+
 
   useEffect(() => {
     console.log('using effect hook...')
