@@ -67,7 +67,7 @@ function App() {
         </div>
       </form>
       <h2>Notes</h2>
-      <button onClick={() => handleShowAll()}>Show important only</button>
+      <button onClick={() => handleShowAll()}>{showAll ? 'Show important only' : 'Show All'}</button>
       {notesToShow.map(note => <Note note={note} toggleImportance={() => toggleImportance(note.id)} key={note.id} />)}
     </div>
   );
