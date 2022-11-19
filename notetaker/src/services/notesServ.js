@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-const url = `http://localhost:3001/notes`;
+const url = `http://localhost:3001/api/notes`;
 
 const getAll = () => {
     console.log(`getting all`)
