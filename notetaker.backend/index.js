@@ -4,10 +4,44 @@ require('dotenv').config()
 
 const PORT = process.env.PORT;
 
-app.get(`/`, (request,response) => {
-    response.json(`<h1>Hello</h1>`)
+const temporaryNotes = [
+    {
+        "content": "Test Note 1",
+        "id": 1,
+        "important": true,
+        "date": "2022-11-19T00:08:45.805Z"
+    },
+    {
+        "content": "Test Note 2",
+        "id": 2,
+        "important": true,
+        "date": "2022-11-19T00:08:45.805Z"
+    },
+    {
+        "content": "Test Note 3",
+        "id": 3,
+        "important": true,
+        "date": "2022-11-19T00:08:45.805Z"
+    }
+]
+
+app.get(`/`, (request, response) => {
+    response.send(`<h1>Hello</h1>`)
 })
 
+app.get(`/api/notes`, (request, response) => {
+    response.json(temporaryNotes);
+})
+
+app.get(`/api/notes/:id`, (request, response) => {
+    const id = request.params.id;
+    const index = id - 1;
+    if (id > temporaryNotes.length || id < 1) {
+        response.json({ "error": "note not found" })
+    }
+    console.log(`fetching notes of id ${id}`)
+    response.json(temporaryNotes[index]);
+})
 
 app.listen(PORT, (err) => {
     if (!err) {
