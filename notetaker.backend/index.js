@@ -59,7 +59,7 @@ app.get(`/api/notes/:id`, (request, response) => {
 })
 
 app.post(`/api/notes`, (request, response) => {
-    console.log(request.body);
+    // console.log(request.body);
     if (!request.body || !request.body.content) {
         return response.status(400).json({"error":"incorrect/missing parameters"});
     }
@@ -71,12 +71,13 @@ app.post(`/api/notes`, (request, response) => {
     }
 
     temporaryNotes = temporaryNotes.concat(noteToAdd)
-    console.log(noteToAdd);
+    // console.log(noteToAdd);
     response.json(noteToAdd);
 })
 
 app.put(`/api/notes/:id`, (request, response) => {
     const id = request.body.id;
+    // console.log(typeof id, id, typeof request.params['id'], request.params['id'])
     if (id !== Number(request.params['id'])) {
         return response.status(400).json({"error":"bad request, invalid id"})
     }
@@ -92,19 +93,18 @@ app.put(`/api/notes/:id`, (request, response) => {
         important: request.body.important,
         date: request.body.date
     }
-    console.log('Updated Note', updatedNote);
+    // console.log('Updated Note', updatedNote);
     temporaryNotes = temporaryNotes.map(note => note.id !== id ? note : updatedNote);
-    console.log('new note version has been pushed', temporaryNotes)
+    // console.log('new note version has been pushed', temporaryNotes)
     response.json(request.body)
 })
 
 app.delete(`/api/notes/:id`, (request, response) => {
     const id = Number(request.params.id);
-    console.log(typeof id, id)
     if (!temporaryNotes.find(note => note.id === id)) {
         response.status(400).json({"error":"id does not exist"})
     }
-
+    
     temporaryNotes = temporaryNotes.filter(note => note.id !== id);
     response.status(200).end();
 })
