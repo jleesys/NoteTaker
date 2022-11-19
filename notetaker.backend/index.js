@@ -1,6 +1,8 @@
 const express = require('express')
 const app = express();
 require('dotenv').config()
+const cors = require('cors')
+app.use(cors())
 
 const PORT = process.env.PORT;
 
@@ -20,6 +22,12 @@ const temporaryNotes = [
     {
         "content": "Test Note 3",
         "id": 3,
+        "important": true,
+        "date": "2022-11-19T00:08:45.805Z"
+    },
+    {
+        "content": "Deaf Note",
+        "id": 4,
         "important": true,
         "date": "2022-11-19T00:08:45.805Z"
     }
