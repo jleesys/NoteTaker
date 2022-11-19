@@ -1,12 +1,14 @@
 const express = require('express')
 const app = express();
+const { response, json } = require('express')
+app.use(express.json())
 require('dotenv').config()
 const cors = require('cors')
 app.use(cors())
 
 const PORT = process.env.PORT;
 
-const temporaryNotes = [
+let temporaryNotes = [
     {
         "content": "Test Note 1",
         "id": 1,
@@ -33,6 +35,11 @@ const temporaryNotes = [
     }
 ]
 
+const generateID = () => {
+    const newID = Math.max(...temporaryNotes.map(note => note.id)) + 1;
+    return newID;
+}
+
 app.get(`/`, (request, response) => {
     response.send(`<h1>Hello</h1>`)
 })
@@ -49,6 +56,23 @@ app.get(`/api/notes/:id`, (request, response) => {
     }
     console.log(`fetching notes of id ${id}`)
     response.json(temporaryNotes[index]);
+})
+
+app.post(`/api/notes`, (request, response) => {
+    console.log(request.body);
+    if (!request.body || !request.body.content) {
+        response.json({"error":"incorrect/missing parameters"});
+    }
+    const noteToAdd = {
+        id: generateID(),
+        content: request.body.content,
+        important: request.body.important,
+        date: request.body.date
+    }
+
+    temporaryNotes = temporaryNotes.concat(noteToAdd)
+    console.log(noteToAdd);
+    response.json(noteToAdd);
 })
 
 app.listen(PORT, (err) => {
