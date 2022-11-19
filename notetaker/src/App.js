@@ -72,9 +72,10 @@ const toggleImportance = (id) => {
   )
   setNotesToShow(notes);
 
-  axios
-    .put(`http://localhost:3001/notes/${id}`, newNote)
-    .then(response => console.log('Importance changed in the DB'))
+  notesServices.putUpdate(newNote,id).catch(err => console.log('oopsy woopsy', err));
+  // axios
+  //   .put(`http://localhost:3001/notes/${id}`, newNote)
+  //   .then(response => console.log('Importance changed in the DB'))
   // console.log('Importance changed')
 }
 
