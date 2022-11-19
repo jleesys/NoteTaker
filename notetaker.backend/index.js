@@ -75,6 +75,20 @@ app.post(`/api/notes`, (request, response) => {
     response.json(noteToAdd);
 })
 
+app.put(`/api/notes`, (request, response) => {
+    const id = request.body.id;
+    const updatedNote = {
+        id: request.body.id,
+        content: request.body.content,
+        important: request.body.important,
+        date: request.body.date
+    }
+    console.log('Updated Note', updatedNote);
+    temporaryNotes = temporaryNotes.map(note => note.id !== id ? note : updatedNote);
+    console.log('new note version has been pushed', temporaryNotes)
+    response.json(request.body)
+})
+
 app.listen(PORT, (err) => {
     if (!err) {
         console.log(`App started on port ${PORT}`)
