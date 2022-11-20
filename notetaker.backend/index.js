@@ -122,11 +122,13 @@ app.put(`/api/notes/:id`, (request, response) => {
 
 app.delete(`/api/notes/:id`, (request, response) => {
     const id = Number(request.params.id);
+    console.log('my notes right now... before deleting ', temporaryNotes)
     if (!temporaryNotes.find(note => note.id === id)) {
         response.status(400).json({"error":"id does not exist"})
     }
     
     temporaryNotes = temporaryNotes.filter(note => note.id !== id);
+    console.log('my notes right now... after deleting ', temporaryNotes)
     response.status(204).end();
 })
 
