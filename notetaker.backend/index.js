@@ -12,7 +12,7 @@ app.use(cors())
 // Allows serving of static pages (build directory)
 app.use(express.static('build'))
 
-const PORT = process.env.PORT;
+const PORT = process.env.PORT || 3001;
 
 let temporaryNotes = [
     {
