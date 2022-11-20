@@ -51,7 +51,7 @@ function App() {
     }
     const noteToAdd = {
       content: noteText,
-      id: generateNewID(),
+      // id: generateNewID(),
       important: false,
       date: new Date().toISOString()
     }
