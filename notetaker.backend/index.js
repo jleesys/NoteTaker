@@ -1,10 +1,16 @@
+// allows use of express lib
 const express = require('express')
 const app = express();
+// allows use of json and response methods
 const { response, json } = require('express')
 app.use(express.json())
+// allows use of env vars
 require('dotenv').config()
+// allows cross origin sharing
 const cors = require('cors')
 app.use(cors())
+// Allows serving of static pages (build directory)
+app.use(express.static('build'))
 
 const PORT = process.env.PORT;
 
