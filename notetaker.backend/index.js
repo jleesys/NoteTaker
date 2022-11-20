@@ -50,7 +50,9 @@ let temporaryNotes = [
 
 const generateID = () => {
     // finds the MAX id (the last note posted)
-    const arrayOfID = (temporaryNotes.map(note => note.id));
+    // OLD METHOD
+    // const arrayOfID = (temporaryNotes.map(note => note.id));
+    const arrayOfID = collect(Note.find({})).toArray();
     console.log('the array of current id', arrayOfID)
     const max = arrayOfID.length ? Math.max(...arrayOfID) : 0;
     // const max = Math.max(...arrayOfID);
@@ -91,14 +93,20 @@ app.post(`/api/notes`, (request, response) => {
     if (!request.body || !request.body.content) {
         return response.status(400).json({"error":"incorrect/missing parameters"});
     }
-    const noteToAdd = {
+    const noteToAdd = new Note({
         id: generateID(),
         content: request.body.content,
         important: request.body.important,
         date: request.body.date
-    }
+    })
 
-    temporaryNotes = temporaryNotes.concat(noteToAdd)
+    noteToAdd.save()
+        .then(result => {
+            console.log('Note saved', result)
+        })
+        .catch(err => console.log('woops, error saving note ', err))
+    // OLD TEMP NOTES DB
+    // temporaryNotes = temporaryNotes.concat(noteToAdd)
     // console.log(noteToAdd);
     response.json(noteToAdd);
 })
