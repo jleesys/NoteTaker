@@ -13,7 +13,8 @@ app.use(cors())
 app.use(express.static('build'))
 // use MORGAN
 var morgan = require('morgan');
-app.use(morgan('dev'));
+morgan.token('payload', function (request, response) {return JSON.stringify(request.body)})
+app.use(morgan(':method :url :status :res[content-length] - :response-time ms :payload'));
 
 const PORT = process.env.PORT || 3001;
 
@@ -48,10 +49,10 @@ let temporaryNotes = [
 const generateID = () => {
     // finds the MAX id (the last note posted)
     const arrayOfID = (temporaryNotes.map(note => note.id));
-    console.log('the array of current id', arrayOfID)
+    // console.log('the array of current id', arrayOfID)
     const max = arrayOfID.length ? Math.max(...arrayOfID) : 0;
     // const max = Math.max(...arrayOfID);
-    console.log('the max is gonna be ', typeof max, max)
+    // console.log('the max is gonna be ', typeof max, max)
     // creates var for the NEXT ID to use.
     // if the max is undefined or null (doesnt exist), makes max = 1
     const newID = max + 1;

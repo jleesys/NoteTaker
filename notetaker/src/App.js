@@ -55,7 +55,10 @@ function App() {
       important: false,
       date: new Date().toISOString()
     }
+    console.log('note added ',noteToAdd)
+
     setNotes(notes.concat(noteToAdd));
+    console.log(notes);
 
     notesServices
       .postNew(noteToAdd)

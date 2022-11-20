@@ -1,7 +1,9 @@
 import axios from 'axios'
 
-// const url = `http://localhost:3001/api/notes`;
-const url = `https://bittersurf-420.fly.dev/api/notes`;
+// DEV URL
+const url = `http://localhost:3001/api/notes`;
+// PROD URL
+// const url = `https://bittersurf-420.fly.dev/api/notes`;
 
 const getAll = () => {
     console.log(`getting all`)
