@@ -11,11 +11,14 @@ const cors = require('cors')
 app.use(cors())
 // Allows serving of static pages (build directory)
 app.use(express.static('build'))
+// use mongo DB
+const mongoose = require('mongoose');
 // use MORGAN
 var morgan = require('morgan');
 app.use(morgan('dev'));
 
 const PORT = process.env.PORT || 3001;
+const Note = require('./models/note');
 
 //notes
 let temporaryNotes = [
@@ -65,7 +68,12 @@ app.get(`/`, (request, response) => {
 })
 
 app.get(`/api/notes`, (request, response) => {
-    response.json(temporaryNotes);
+    // 11.19 20:14 MongoDB implementation for get all
+    Note.find({})
+        .then(notes => {
+            response.json(notes);
+        })
+    // response.json(temporaryNotes);
 })
 
 app.get(`/api/notes/:id`, (request, response) => {
