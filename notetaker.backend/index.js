@@ -106,7 +106,7 @@ app.delete(`/api/notes/:id`, (request, response) => {
     }
     
     temporaryNotes = temporaryNotes.filter(note => note.id !== id);
-    response.status(200).end();
+    response.status(204).end();
 })
 
 app.listen(PORT, (err) => {
