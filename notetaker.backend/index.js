@@ -17,6 +17,7 @@ app.use(morgan('dev'));
 
 const PORT = process.env.PORT || 3001;
 
+//notes
 let temporaryNotes = [
     {
         "content": "Test Note 1",
@@ -45,7 +46,17 @@ let temporaryNotes = [
 ]
 
 const generateID = () => {
-    const newID = Math.max(...temporaryNotes.map(note => note.id)) + 1;
+    // finds the MAX id (the last note posted)
+    const arrayOfID = (temporaryNotes.map(note => note.id));
+    console.log('the array of current id', arrayOfID)
+    const max = arrayOfID.length ? Math.max(...arrayOfID) : 0;
+    // const max = Math.max(...arrayOfID);
+    console.log('the max is gonna be ', typeof max, max)
+    // creates var for the NEXT ID to use.
+    // if the max is undefined or null (doesnt exist), makes max = 1
+    const newID = max + 1;
+    console.log('new id ', typeof newID, newID)
+    // const newID = Math.max(...temporaryNotes.map(note => note.id)) + 1;
     return newID;
 }
 
