@@ -21,10 +21,11 @@ function App() {
   const [notesToShow, setNotesToShow] = useState(notes);
   const [message, setMessage] = useState(null);
   window.notes = notes;
+  window.notesToShow = notesToShow;
   window.message = message;
 
   useEffect(() => {
-    console.log('effect')
+    console.log('initialization')
     notesServices
       .getAll()
       .then(response => {
@@ -32,6 +33,16 @@ function App() {
         setNotesToShow(response)
       })
   }, [])
+
+  useEffect(() => {
+    console.log('grabbing new db after submission')
+    notesServices
+      .getAll()
+      .then(response => {
+        setNotes(response)
+        setNotesToShow(response)
+      })
+  }, [message])
 
   const generateNewID = () => {
     return (Math.max(...notes.map(note => note.id)) + 1);
@@ -45,7 +56,7 @@ function App() {
     event.preventDefault();
     if (noteText == "" || noteText == null) {
       setMessage('Error: Cannot enter blank note. Try again.')
-      setTimeout(() => setMessage(null),5000)
+      setTimeout(() => setMessage(null), 5000)
       console.log('invalid entry')
       return
     }
@@ -55,13 +66,15 @@ function App() {
       important: false,
       date: new Date().toISOString()
     }
-    console.log('note added ',noteToAdd)
+    console.log('note added ', noteToAdd)
 
     setNotes(notes.concat(noteToAdd));
     console.log(notes);
 
     notesServices
       .postNew(noteToAdd)
+
+
     setNoteText("");
     setMessage("Note has been added!")
     setTimeout(() => setMessage(null), 5000)
