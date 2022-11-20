@@ -11,6 +11,9 @@ const cors = require('cors')
 app.use(cors())
 // Allows serving of static pages (build directory)
 app.use(express.static('build'))
+// use MORGAN
+const morgan = require('morgan')
+morgan('dev')
 
 const PORT = process.env.PORT || 3001;
 
