@@ -20,6 +20,7 @@ function App() {
   const [showAll, setShowAll] = useState(true);
   const [notesToShow, setNotesToShow] = useState(notes);
   const [message, setMessage] = useState(null);
+  const [refresher, setRefresher] = useState("");
   window.notes = notes;
   window.notesToShow = notesToShow;
   window.message = message;
@@ -42,7 +43,7 @@ function App() {
         setNotes(response)
         setNotesToShow(response)
       })
-  }, [message])
+  }, [refresher])
 
   const generateNewID = () => {
     return (Math.max(...notes.map(note => note.id)) + 1);
@@ -73,6 +74,9 @@ function App() {
 
     notesServices
       .postNew(noteToAdd)
+      .then(result => {
+        setRefresher(result);
+      })
 
 
     setNoteText("");
