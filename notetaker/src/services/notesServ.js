@@ -11,6 +11,9 @@ const getAll = () => {
     const request = axios
         .get(url)
         .then(response => response.data)
+        .catch(err => {
+            console.log('Failed to get notes... Try refreshing.')
+        })
     return request;
 }
 
@@ -18,8 +21,6 @@ const postNew = (newObject) => {
     const request = axios
         .post(url, newObject)
         .then(response => {
-            // console.log(`response: `, response)
-            // console.log(`responsedata: `, response.data)
             return response.data
         })
         .catch(err => console.log(`error posting: `, err))
@@ -30,7 +31,10 @@ const putUpdate = (newObject, id) => {
     console.log(`creating put update for id ${id}`)
     const request = axios
         .put(`${url}/${id}`, newObject)
-        .then(response => response.data);
+        .then(response => response.data)
+        .catch(err => {
+            console.log('failed to update note...');
+        })
     console.log(`id ${id} has been putted :)`)
     return request;
 }
@@ -39,6 +43,9 @@ const remove = (id) => {
     console.log(`removing object id ${id}`)
     const request = axios
         .delete(`${url}/${id}`)
+        .catch(err => {
+            console.log('error deleting note...')
+        })
     return request;
 }
 export default { getAll, postNew, putUpdate, remove }

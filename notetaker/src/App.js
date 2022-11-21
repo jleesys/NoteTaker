@@ -6,23 +6,15 @@ import notesServices from './services/notesServ'
 import notesServ from "./services/notesServ";
 
 
-// const testNotes = [
-//   { content: "Test Note 1", id: 1, important: true, date: new Date().toISOString() },
-//   { content: "Test Note 2", id: 2, important: false, date: new Date().toISOString() },
-//   { content: "Test Note 3", id: 3, important: true, date: new Date().toISOString() },
-//   { content: "Test Note 4", id: 4, important: false, date: new Date().toISOString() },
-// ]
-
 function App() {
-  // const [notes, setNotes] = useState(testNotes);
   const [notes, setNotes] = useState([]);
   const [noteText, setNoteText] = useState("");
   const [showAll, setShowAll] = useState(true);
   const [notesToShow, setNotesToShow] = useState(notes);
   const [message, setMessage] = useState(null);
-  window.notes = notes;
-  window.notesToShow = notesToShow;
-  window.message = message;
+  // window.notes = notes;
+  // window.notesToShow = notesToShow;
+  // window.message = message;
 
   useEffect(() => {
     console.log('effect')
@@ -57,17 +49,8 @@ function App() {
       date: new Date().toISOString()
     }
     
-    // OLD : WE WILL BE ADDING THE RETURNED MONGO DOC INSTEAD
-    // setNotes(notes.concat(noteToAdd));
-
-    // NEW : WAITING UNTIL THE RESPONSE COMES BACK AND
-    // CONCATTING THE RETURNED MONGO DOCUMENT OBJECT
-    // const newNoteResponse = notesServices.postNew(noteToAdd);
     notesServices.postNew(noteToAdd)
       .then(returnedNote => setNotes(notes.concat(returnedNote)));
-    // console.log(newNoteResponse)
-    // setNotes(notes.concat(newNoteResponse));
-
     setNoteText("");
     setMessage("Note has been added!")
     setTimeout(() => setMessage(null), 5000)
@@ -102,7 +85,6 @@ function App() {
   }
 
   useEffect(() => {
-    // console.log('using effect hook...')
     setNotesToShow(showAll ? notes : notes.filter(note => note.important))
   }, [notes, showAll])
 
