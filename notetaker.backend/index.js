@@ -11,125 +11,135 @@ const cors = require('cors')
 app.use(cors())
 // Allows serving of static pages (build directory)
 app.use(express.static('build'))
+// use mongo DB
+const mongoose = require('mongoose');
 // use MORGAN
 var morgan = require('morgan');
 morgan.token('payload', function (request, response) {return JSON.stringify(request.body)})
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms :payload'));
 
 const PORT = process.env.PORT || 3001;
+const Note = require('./models/note');
 
 //notes
-let temporaryNotes = [
-    {
-        "content": "Test Note 1",
-        "id": 1,
-        "important": true,
-        "date": "2022-11-19T00:08:45.805Z"
-    },
-    {
-        "content": "Test Note 2",
-        "id": 2,
-        "important": true,
-        "date": "2022-11-19T00:08:45.805Z"
-    },
-    {
-        "content": "Test Note 3",
-        "id": 3,
-        "important": true,
-        "date": "2022-11-19T00:08:45.805Z"
-    },
-    {
-        "content": "Deaf Note",
-        "id": 4,
-        "important": true,
-        "date": "2022-11-19T00:08:45.805Z"
-    }
-]
-
-const generateID = () => {
-    // finds the MAX id (the last note posted)
-    const arrayOfID = (temporaryNotes.map(note => note.id));
-    // console.log('the array of current id', arrayOfID)
-    const max = arrayOfID.length ? Math.max(...arrayOfID) : 0;
-    // const max = Math.max(...arrayOfID);
-    // console.log('the max is gonna be ', typeof max, max)
-    // creates var for the NEXT ID to use.
-    // if the max is undefined or null (doesnt exist), makes max = 1
-    const newID = max + 1;
-    console.log('new id ', typeof newID, newID)
-    // const newID = Math.max(...temporaryNotes.map(note => note.id)) + 1;
-    return newID;
-}
+// let temporaryNotes = [
+//     {
+//         "content": "Test Note 1",
+//         "id": 1,
+//         "important": true,
+//         "date": "2022-11-19T00:08:45.805Z"
+//     },
+//     {
+//         "content": "Test Note 2",
+//         "id": 2,
+//         "important": true,
+//         "date": "2022-11-19T00:08:45.805Z"
+//     },
+//     {
+//         "content": "Test Note 3",
+//         "id": 3,
+//         "important": true,
+//         "date": "2022-11-19T00:08:45.805Z"
+//     },
+//     {
+//         "content": "Deaf Note",
+//         "id": 4,
+//         "important": true,
+//         "date": "2022-11-19T00:08:45.805Z"
+//     }
+// ]
 
 app.get(`/`, (request, response) => {
     response.send(`<h1>Hello</h1>`)
 })
 
 app.get(`/api/notes`, (request, response) => {
-    response.json(temporaryNotes);
+    Note.find({})
+        .then(notes => {
+            response.json(notes);
+        })
 })
 
 app.get(`/api/notes/:id`, (request, response) => {
-    const id = request.params.id;
-    const index = id - 1;
-    if (id > temporaryNotes.length || id < 1) {
-        response.json({ "error": "note not found" })
-    }
-    console.log(`fetching notes of id ${id}`)
-    response.json(temporaryNotes[index]);
+    const idToGet = request.params.id;
+
+    Note.findById(idToGet)
+        .then(gotDoc => {
+            console.log(`GOT ${gotDoc}`);
+            if (gotDoc) {
+                response.json(gotDoc);
+            } else {
+                response.status(404).end();
+            }
+        })
+        .catch(err => {
+            console.log(`whoops failed to get the requested doc\nLikely WRONG ID TYPE. \nSubmitted ID: ${idToGet}`)
+            response.status(400).json({ "error": `whoops, malformed id}` })
+        })
+
 })
 
 app.post(`/api/notes`, (request, response) => {
-    // console.log(request.body);
     if (!request.body || !request.body.content) {
-        return response.status(400).json({"error":"incorrect/missing parameters"});
+        return response.status(400).json({ "error": "incorrect/missing parameters" });
     }
-    const noteToAdd = {
-        id: generateID(),
+    const noteToAdd = new Note({
         content: request.body.content,
         important: request.body.important,
         date: request.body.date
-    }
+    })
 
-    temporaryNotes = temporaryNotes.concat(noteToAdd)
-    // console.log(noteToAdd);
-    response.json(noteToAdd);
+    noteToAdd.save()
+        .then(result => {
+            console.log('Note saved', result)
+            response.json(result);
+        })
+        .catch(err => console.log('woops, error saving note ', err))
+
 })
 
 app.put(`/api/notes/:id`, (request, response) => {
-    const id = request.body.id;
-    // console.log(typeof id, id, typeof request.params['id'], request.params['id'])
-    if (id !== Number(request.params['id'])) {
-        return response.status(400).json({"error":"bad request, invalid id"})
+    const id = request.params.id;
+    if (id !== request.body.id) {
+        return response.status(400).send({"error":`unable to reconcile the requested id ${id}`});
     }
-    if (!temporaryNotes.find(note => note.id === id)) {
-        return response.status(400).json({"error":"id does not exist"})
-    }
-    if (!request.body || !request.body.content) {
-        return response.status(400).json({"error":"incorrect/missing parameters"});
-    }
+
     const updatedNote = {
         id: request.body.id,
         content: request.body.content,
         important: request.body.important,
         date: request.body.date
     }
-    // console.log('Updated Note', updatedNote);
-    temporaryNotes = temporaryNotes.map(note => note.id !== id ? note : updatedNote);
-    // console.log('new note version has been pushed', temporaryNotes)
-    response.json(request.body)
+
+    Note.findByIdAndUpdate(id, updatedNote)
+        .then(returnedNote => {
+            if (returnedNote) {
+                response.json(returnedNote);
+            } else {
+                response.status(404).send({ "error": `could not find object by id ${id}` });
+            }
+        })
+        .catch(err => {
+            response.status(400).send({ "error": `invalid id ${id}` });
+        })
 })
 
 app.delete(`/api/notes/:id`, (request, response) => {
-    const id = Number(request.params.id);
-    console.log('my notes right now... before deleting ', temporaryNotes)
-    if (!temporaryNotes.find(note => note.id === id)) {
-        response.status(400).json({"error":"id does not exist"})
-    }
-    
-    temporaryNotes = temporaryNotes.filter(note => note.id !== id);
-    console.log('my notes right now... after deleting ', temporaryNotes)
-    response.status(204).end();
+    const id = request.params.id;
+    Note.findByIdAndDelete(id)
+        .then(deletedDoc => {
+            console.log('deleted Doc: ', deletedDoc);
+            if (deletedDoc) {
+                response.json(deletedDoc);
+            } else {
+                response.status(404).send({ "error": "could not find requested id" })
+            }
+        })
+        .catch(err => {
+            console.log('Oops. Failed to delete doc: \n', err)
+            response.status(400).send({ "error": "failed to delete" })
+        })
+
 })
 
 app.listen(PORT, (err) => {
