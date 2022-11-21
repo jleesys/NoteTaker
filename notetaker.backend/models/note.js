@@ -5,8 +5,6 @@ const url = process.env.MONGODB_URL;
 
 // create schema
 const noteSchema = new mongoose.Schema({
-    // OLD : LETS NOT SUBMIT WITH AN ID, INSTEAD USE MONGO OBJECTID
-    // id: Number,
     content: String,
     important: Boolean,
     date: String
@@ -35,27 +33,3 @@ mongoose
 })
 
 module.exports = Note
-
-// mongoose
-//     .connect(url)
-//     .then(result => {
-//         console.log(`connecting to url ${url}`)
-//         console.log(`connection success`)
-//     })
-//     .then(result => {
-//         const note = new Note({
-//             "content": "Testy Test Test",
-//             "id": 69,
-//             "important": true,
-//             "date": "INSERT DATE HERE 1"
-//         })
-//         console.log('saving note')
-//         return note.save();
-//     })
-//     .then(result => {
-//         console.log('closing connection');
-//         return mongoose.connection.close();
-//     } )
-//     .catch (err => {
-//     console.log(`woops, operation failed : `, err)
-// })
