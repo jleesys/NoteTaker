@@ -26,6 +26,8 @@ function App() {
       })
   }, [])
 
+  // this is where the old effect hook was for refreshing
+
   const generateNewID = () => {
     return (Math.max(...notes.map(note => note.id)) + 1);
   }
