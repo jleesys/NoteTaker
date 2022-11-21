@@ -79,13 +79,27 @@ app.get(`/api/notes`, (request, response) => {
 })
 
 app.get(`/api/notes/:id`, (request, response) => {
-    const id = request.params.id;
-    const index = id - 1;
-    if (id > temporaryNotes.length || id < 1) {
-        response.json({ "error": "note not found" })
-    }
-    console.log(`fetching notes of id ${id}`)
-    response.json(temporaryNotes[index]);
+    const idToGet = request.params.id;
+
+    Note.findById(idToGet)
+        .then(gotDoc => {
+            console.log(`GOT ${gotDoc}`);
+            response.json(gotDoc);
+        })
+        .catch(err => {
+            console.log(`whoops failed to get obj ID ${idToGet}`)
+            response.status(400).json({"error":`whoops failed to get obj ID ${idToGet}`})
+        })
+
+    // OLD : NO LONGER USING BACKEND GEN ID
+    // IMPLEMENT MONGO OBJECT ID 
+    // const id = request.params.id;
+    // const index = id - 1;
+    // if (id > temporaryNotes.length || id < 1) {
+    //     response.json({ "error": "note not found" })
+    // }
+    // console.log(`fetching notes of id ${id}`)
+    // response.json(temporaryNotes[index]);
 })
 
 app.post(`/api/notes`, (request, response) => {
