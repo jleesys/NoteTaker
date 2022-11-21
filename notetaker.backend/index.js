@@ -164,7 +164,11 @@ app.delete(`/api/notes/:id`, (request, response) => {
     Note.findByIdAndDelete(id)
         .then(deletedDoc => {
             console.log('deleted Doc: ',deletedDoc);
+            if (deletedDoc) {
             response.json(deletedDoc);
+            } else {
+                response.status(404).send({"error":"could not find requested id"})
+            }
         })
         .catch(err => {
             console.log('Oops. Failed to delete doc: \n', err)
