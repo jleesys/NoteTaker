@@ -21,6 +21,7 @@ function App() {
   const [notesToShow, setNotesToShow] = useState(notes);
   const [message, setMessage] = useState(null);
   window.notes = notes;
+  window.notesToShow = notesToShow;
   window.message = message;
 
   useEffect(() => {
@@ -55,10 +56,18 @@ function App() {
       important: false,
       date: new Date().toISOString()
     }
-    setNotes(notes.concat(noteToAdd));
+    
+    // OLD : WE WILL BE ADDING THE RETURNED MONGO DOC INSTEAD
+    // setNotes(notes.concat(noteToAdd));
 
-    notesServices
-      .postNew(noteToAdd)
+    // NEW : WAITING UNTIL THE RESPONSE COMES BACK AND
+    // CONCATTING THE RETURNED MONGO DOCUMENT OBJECT
+    // const newNoteResponse = notesServices.postNew(noteToAdd);
+    notesServices.postNew(noteToAdd)
+      .then(returnedNote => setNotes(notes.concat(returnedNote)));
+    // console.log(newNoteResponse)
+    // setNotes(notes.concat(newNoteResponse));
+
     setNoteText("");
     setMessage("Note has been added!")
     setTimeout(() => setMessage(null), 5000)
