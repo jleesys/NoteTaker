@@ -84,11 +84,15 @@ app.get(`/api/notes/:id`, (request, response) => {
     Note.findById(idToGet)
         .then(gotDoc => {
             console.log(`GOT ${gotDoc}`);
-            response.json(gotDoc);
+            if (gotDoc) {
+                response.json(gotDoc);
+            } else {
+                response.status(404).end();
+            }
         })
         .catch(err => {
-            console.log(`whoops failed to get obj ID ${idToGet}`)
-            response.status(400).json({"error":`whoops failed to get obj ID ${idToGet}`})
+            console.log(`whoops failed to get the requested doc\nLikely WRONG ID TYPE. \nSubmitted ID: ${idToGet}`)
+            response.status(400).json({"error":`whoops, malformed id}`})
         })
 
     // OLD : NO LONGER USING BACKEND GEN ID
