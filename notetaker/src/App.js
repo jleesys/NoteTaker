@@ -30,6 +30,7 @@ function App() {
     return (Math.max(...notes.map(note => note.id)) + 1);
   }
 
+  
   const handleNoteInput = (event) => {
     setNoteText(event.target.value);
   }
