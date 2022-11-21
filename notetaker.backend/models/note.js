@@ -5,10 +5,19 @@ const url = process.env.MONGODB_URL;
 
 // create schema
 const noteSchema = new mongoose.Schema({
-    id: Number,
+    // OLD : LETS NOT SUBMIT WITH AN ID, INSTEAD USE MONGO OBJECTID
+    // id: Number,
     content: String,
     important: Boolean,
     date: String
+})
+
+noteSchema.set('toJSON', {
+    transform: (document, returnedObject) => {
+        returnedObject.id = returnedObject._id.toString()
+        delete returnedObject._id
+        delete returnedObject.__v
+    }
 })
 
 // create model

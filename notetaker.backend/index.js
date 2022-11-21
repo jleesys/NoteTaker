@@ -94,7 +94,9 @@ app.post(`/api/notes`, (request, response) => {
         return response.status(400).json({"error":"incorrect/missing parameters"});
     }
     const noteToAdd = new Note({
-        id: generateID(),
+        // OLD : LETS NOT GENERATE ID'S ON THE SERVER ANY MORE 
+        // INSTEAD, SUBMIT WITHOUT ID PROPERTY
+        // id: generateID(),
         content: request.body.content,
         important: request.body.important,
         date: request.body.date
@@ -103,12 +105,16 @@ app.post(`/api/notes`, (request, response) => {
     noteToAdd.save()
         .then(result => {
             console.log('Note saved', result)
+            response.json(result);
         })
         .catch(err => console.log('woops, error saving note ', err))
+
     // OLD TEMP NOTES DB
     // temporaryNotes = temporaryNotes.concat(noteToAdd)
     // console.log(noteToAdd);
-    response.json(noteToAdd);
+    
+    // OLD : LETS RESPOND WITH THE JSON PROVIDED BY DB IN RESPONSE
+    // response.json(noteToAdd);
 })
 
 app.put(`/api/notes/:id`, (request, response) => {
