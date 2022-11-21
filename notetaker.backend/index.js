@@ -92,7 +92,7 @@ app.get(`/api/notes/:id`, (request, response) => {
         })
         .catch(err => {
             console.log(`whoops failed to get the requested doc\nLikely WRONG ID TYPE. \nSubmitted ID: ${idToGet}`)
-            response.status(400).json({"error":`whoops, malformed id}`})
+            response.status(400).json({ "error": `whoops, malformed id}` })
         })
 
     // OLD : NO LONGER USING BACKEND GEN ID
@@ -109,7 +109,7 @@ app.get(`/api/notes/:id`, (request, response) => {
 app.post(`/api/notes`, (request, response) => {
     // console.log(request.body);
     if (!request.body || !request.body.content) {
-        return response.status(400).json({"error":"incorrect/missing parameters"});
+        return response.status(400).json({ "error": "incorrect/missing parameters" });
     }
     const noteToAdd = new Note({
         // OLD : LETS NOT GENERATE ID'S ON THE SERVER ANY MORE 
@@ -130,56 +130,80 @@ app.post(`/api/notes`, (request, response) => {
     // OLD TEMP NOTES DB
     // temporaryNotes = temporaryNotes.concat(noteToAdd)
     // console.log(noteToAdd);
-    
+
     // OLD : LETS RESPOND WITH THE JSON PROVIDED BY DB IN RESPONSE
     // response.json(noteToAdd);
 })
 
 app.put(`/api/notes/:id`, (request, response) => {
-    const id = request.body.id;
-    // console.log(typeof id, id, typeof request.params['id'], request.params['id'])
-    if (id !== Number(request.params['id'])) {
-        return response.status(400).json({"error":"bad request, invalid id"})
+    // const id = request.body.id;
+
+    const id = request.params.id;
+    if (id !== request.body.id) {
+        return response.status(400).send({"error":`unable to reconcile the requested id ${id}`});
     }
-    if (!temporaryNotes.find(note => note.id === id)) {
-        return response.status(400).json({"error":"id does not exist"})
-    }
-    if (!request.body || !request.body.content) {
-        return response.status(400).json({"error":"incorrect/missing parameters"});
-    }
+
     const updatedNote = {
         id: request.body.id,
         content: request.body.content,
         important: request.body.important,
         date: request.body.date
     }
+
+    Note.findByIdAndUpdate(id, updatedNote)
+        .then(returnedNote => {
+            if (returnedNote) {
+                response.json(returnedNote);
+            } else {
+                response.status(404).send({ "error": `could not find object by id ${id}` });
+            }
+        })
+        .catch(err => {
+            response.status(400).send({ "error": `invalid id ${id}` });
+        })
+    // OLD : USING TEMP IN FILE DB
+    // if (id !== Number(request.params['id'])) {
+    //     return response.status(400).json({"error":"bad request, invalid id"})
+    // }
+    // if (!temporaryNotes.find(note => note.id === id)) {
+    //     return response.status(400).json({"error":"id does not exist"})
+    // }
+    // if (!request.body || !request.body.content) {
+    //     return response.status(400).json({"error":"incorrect/missing parameters"});
+    // }
+    // const updatedNote = {
+    //     id: request.body.id,
+    //     content: request.body.content,
+    //     important: request.body.important,
+    //     date: request.body.date
+    // }
     // console.log('Updated Note', updatedNote);
-    temporaryNotes = temporaryNotes.map(note => note.id !== id ? note : updatedNote);
+    // temporaryNotes = temporaryNotes.map(note => note.id !== id ? note : updatedNote);
     // console.log('new note version has been pushed', temporaryNotes)
-    response.json(request.body)
+    // response.json(request.body)
 })
 
 app.delete(`/api/notes/:id`, (request, response) => {
     const id = request.params.id;
     Note.findByIdAndDelete(id)
         .then(deletedDoc => {
-            console.log('deleted Doc: ',deletedDoc);
+            console.log('deleted Doc: ', deletedDoc);
             if (deletedDoc) {
-            response.json(deletedDoc);
+                response.json(deletedDoc);
             } else {
-                response.status(404).send({"error":"could not find requested id"})
+                response.status(404).send({ "error": "could not find requested id" })
             }
         })
         .catch(err => {
             console.log('Oops. Failed to delete doc: \n', err)
-            response.status(400).send({"error":"failed to delete"})
+            response.status(400).send({ "error": "failed to delete" })
         })
 
     // OLD : TESTING WITH TEMP NOTES
     // if (!temporaryNotes.find(note => note.id === id)) {
     //     response.status(400).json({"error":"id does not exist"})
     // }
-    
+
     // temporaryNotes = temporaryNotes.filter(note => note.id !== id);
     // response.status(204).end();
 })
