@@ -48,22 +48,22 @@ let temporaryNotes = [
     }
 ]
 
-const generateID = () => {
-    // finds the MAX id (the last note posted)
-    // OLD METHOD
-    // const arrayOfID = (temporaryNotes.map(note => note.id));
-    const arrayOfID = collect(Note.find({})).toArray();
-    console.log('the array of current id', arrayOfID)
-    const max = arrayOfID.length ? Math.max(...arrayOfID) : 0;
-    // const max = Math.max(...arrayOfID);
-    console.log('the max is gonna be ', typeof max, max)
-    // creates var for the NEXT ID to use.
-    // if the max is undefined or null (doesnt exist), makes max = 1
-    const newID = max + 1;
-    console.log('new id ', typeof newID, newID)
-    // const newID = Math.max(...temporaryNotes.map(note => note.id)) + 1;
-    return newID;
-}
+// const generateID = () => {
+//     // finds the MAX id (the last note posted)
+//     // OLD METHOD
+//     // const arrayOfID = (temporaryNotes.map(note => note.id));
+//     const arrayOfID = collect(Note.find({})).toArray();
+//     console.log('the array of current id', arrayOfID)
+//     const max = arrayOfID.length ? Math.max(...arrayOfID) : 0;
+//     // const max = Math.max(...arrayOfID);
+//     console.log('the max is gonna be ', typeof max, max)
+//     // creates var for the NEXT ID to use.
+//     // if the max is undefined or null (doesnt exist), makes max = 1
+//     const newID = max + 1;
+//     console.log('new id ', typeof newID, newID)
+//     // const newID = Math.max(...temporaryNotes.map(note => note.id)) + 1;
+//     return newID;
+// }
 
 app.get(`/`, (request, response) => {
     response.send(`<h1>Hello</h1>`)
@@ -160,13 +160,24 @@ app.put(`/api/notes/:id`, (request, response) => {
 })
 
 app.delete(`/api/notes/:id`, (request, response) => {
-    const id = Number(request.params.id);
-    if (!temporaryNotes.find(note => note.id === id)) {
-        response.status(400).json({"error":"id does not exist"})
-    }
+    const id = request.params.id;
+    Note.findByIdAndDelete(id)
+        .then(deletedDoc => {
+            console.log('deleted Doc: ',deletedDoc);
+            response.json(deletedDoc);
+        })
+        .catch(err => {
+            console.log('Oops. Failed to delete doc: \n', err)
+            response.status(400).send({"error":"failed to delete"})
+        })
+
+    // OLD : TESTING WITH TEMP NOTES
+    // if (!temporaryNotes.find(note => note.id === id)) {
+    //     response.status(400).json({"error":"id does not exist"})
+    // }
     
-    temporaryNotes = temporaryNotes.filter(note => note.id !== id);
-    response.status(204).end();
+    // temporaryNotes = temporaryNotes.filter(note => note.id !== id);
+    // response.status(204).end();
 })
 
 app.listen(PORT, (err) => {
