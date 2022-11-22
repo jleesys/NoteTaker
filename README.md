@@ -9,4 +9,5 @@ Currently still under construction.
 Possible future features:  
 Order by users choice  
 Select note options via a dropdown menu  
+CSS styling  
 
