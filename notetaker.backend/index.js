@@ -53,14 +53,17 @@ app.get(`/`, (request, response) => {
     response.send(`<h1>Hello</h1>`)
 })
 
-app.get(`/api/notes`, (request, response) => {
+app.get(`/api/notes`, (request, response, next) => {
     Note.find({})
         .then(notes => {
             response.json(notes);
         })
+        .catch(err => {
+            next(err);
+        })
 })
 
-app.get(`/api/notes/:id`, (request, response) => {
+app.get(`/api/notes/:id`, (request, response, next) => {
     const idToGet = request.params.id;
 
     Note.findById(idToGet)
@@ -73,13 +76,14 @@ app.get(`/api/notes/:id`, (request, response) => {
             }
         })
         .catch(err => {
-            console.log(`whoops failed to get the requested doc\nLikely WRONG ID TYPE. \nSubmitted ID: ${idToGet}`)
-            response.status(400).json({ "error": `whoops, malformed id}` })
+            next(err);
+            // console.log(`whoops failed to get the requested doc\nLikely WRONG ID TYPE. \nSubmitted ID: ${idToGet}`)
+            // response.status(400).json({ "error": `whoops, malformed id}` })
         })
 
 })
 
-app.post(`/api/notes`, (request, response) => {
+app.post(`/api/notes`, (request, response, next) => {
     if (!request.body || !request.body.content) {
         return response.status(400).json({ "error": "incorrect/missing parameters" });
     }
@@ -94,11 +98,12 @@ app.post(`/api/notes`, (request, response) => {
             console.log('Note saved', result)
             response.json(result);
         })
-        .catch(err => console.log('woops, error saving note ', err))
+        // .catch(err => console.log('woops, error saving note ', err))
+        .catch(err => next(err))
 
 })
 
-app.put(`/api/notes/:id`, (request, response) => {
+app.put(`/api/notes/:id`, (request, response, next) => {
     const id = request.params.id;
     if (id !== request.body.id) {
         return response.status(400).send({"error":`unable to reconcile the requested id ${id}`});
@@ -120,7 +125,8 @@ app.put(`/api/notes/:id`, (request, response) => {
             }
         })
         .catch(err => {
-            response.status(400).send({ "error": `invalid id ${id}` });
+            // response.status(400).send({ "error": `invalid id ${id}` });
+            next(err);
         })
 })
 
@@ -141,6 +147,16 @@ app.delete(`/api/notes/:id`, (request, response) => {
         })
 
 })
+
+const errorHandler = (error, request, response, next) => {
+    console.error(error.message);
+    if (error.name == 'CastError') {
+        return response.status(400).send({error:'malformatted id'})
+    }
+    next(error)
+}
+
+app.use(errorHandler);
 
 app.listen(PORT, (err) => {
     if (!err) {
