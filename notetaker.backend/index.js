@@ -90,12 +90,14 @@ app.post(`/api/notes`, (request, response, next) => {
     const noteToAdd = new Note({
         content: request.body.content,
         important: request.body.important,
-        date: request.body.date
+        // date: request.body.date
+        // BACK END GENERATED DATE/TIME
+        date: new Date()
     })
 
     noteToAdd.save()
         .then(result => {
-            console.log('Note saved', result)
+            // console.log('Note saved', result)
             response.json(result);
         })
         // .catch(err => console.log('woops, error saving note ', err))
@@ -152,6 +154,8 @@ const errorHandler = (error, request, response, next) => {
     console.error(error.message);
     if (error.name == 'CastError') {
         return response.status(400).send({error:'malformatted id'})
+    } else if (error.name === 'ValidationError') {
+        return response.status(400).send({error: error.message})
     }
     next(error)
 }

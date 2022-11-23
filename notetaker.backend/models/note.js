@@ -5,9 +5,16 @@ const url = process.env.MONGODB_URL;
 
 // create schema
 const noteSchema = new mongoose.Schema({
-    content: String,
-    important: Boolean,
-    date: String
+    content: {
+        type: String,
+        required: true,
+        minLength: 5
+    },
+    date: {
+        type: Date,
+        required: true
+    },
+    important: Boolean
 })
 
 noteSchema.set('toJSON', {
@@ -28,8 +35,8 @@ mongoose
         console.log(`connecting to url ${url}`)
         console.log(`connection success`)
     })
-    .catch (err => {
-    console.log(`woops, connection failed : `, err)
-})
+    .catch(err => {
+        console.log(`woops, connection failed : `, err)
+    })
 
 module.exports = Note
