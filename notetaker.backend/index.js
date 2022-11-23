@@ -84,9 +84,9 @@ app.get(`/api/notes/:id`, (request, response, next) => {
 })
 
 app.post(`/api/notes`, (request, response, next) => {
-    if (!request.body || !request.body.content) {
-        return response.status(400).json({ "error": "incorrect/missing parameters" });
-    }
+    // if (!request.body || !request.body.content) {
+    //     return response.status(400).json({ "error": "incorrect/missing parameters" });
+    // }
     const noteToAdd = new Note({
         content: request.body.content,
         important: request.body.important,
