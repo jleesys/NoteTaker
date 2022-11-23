@@ -12,9 +12,9 @@ function App() {
   const [showAll, setShowAll] = useState(true);
   const [notesToShow, setNotesToShow] = useState(notes);
   const [message, setMessage] = useState(null);
-  // window.notes = notes;
-  // window.notesToShow = notesToShow;
-  // window.message = message;
+  window.notes = notes;
+  window.notesToShow = notesToShow;
+  window.message = message;
 
   useEffect(() => {
     console.log('initialization')
@@ -32,7 +32,7 @@ function App() {
     return (Math.max(...notes.map(note => note.id)) + 1);
   }
 
-  
+
   const handleNoteInput = (event) => {
     setNoteText(event.target.value);
   }
@@ -51,9 +51,16 @@ function App() {
       important: false,
       date: new Date().toISOString()
     }
-    
+
+    console.log('Step1')
     notesServices.postNew(noteToAdd)
-      .then(returnedNote => setNotes(notes.concat(returnedNote)));
+      .then(returnedNote => setNotes(notes.concat(returnedNote)))
+      .catch(err => {
+        console.log('Do you see me?');
+        setMessage("Error! Note is too short! Must be at least 5 characters in length. Try again. :)")
+        setTimeout(() => setMessage(null), 5000)
+        return;
+      });
     setNoteText("");
     setMessage("Note has been added!")
     setTimeout(() => setMessage(null), 5000)
