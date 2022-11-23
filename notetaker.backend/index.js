@@ -107,15 +107,15 @@ app.post(`/api/notes`, (request, response, next) => {
 
 app.put(`/api/notes/:id`, (request, response, next) => {
     const id = request.params.id;
-    if (id !== request.body.id) {
-        return response.status(400).send({"error":`unable to reconcile the requested id ${id}`});
-    }
+    // if (id !== request.body.id) {
+    //     return response.status(400).send({"error":`unable to reconcile the requested id ${id}`});
+    // }
 
     const updatedNote = {
-        id: request.body.id,
+        // id: request.body.id,
         content: request.body.content,
         important: request.body.important,
-        date: request.body.date
+        // date: request.body.date
     }
 
     Note.findByIdAndUpdate(id, updatedNote)
