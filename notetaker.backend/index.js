@@ -87,6 +87,7 @@ app.post(`/api/notes`, (request, response, next) => {
     // if (!request.body || !request.body.content) {
     //     return response.status(400).json({ "error": "incorrect/missing parameters" });
     // }
+    console.log('POST route reached')
     const noteToAdd = new Note({
         content: request.body.content,
         important: request.body.important,
@@ -153,10 +154,13 @@ app.delete(`/api/notes/:id`, (request, response) => {
 const errorHandler = (error, request, response, next) => {
     console.error(error.message);
     if (error.name == 'CastError') {
+        console.log('CastError block')
         return response.status(400).send({error:'malformatted id'})
     } else if (error.name === 'ValidationError') {
-        return response.status(400).send({error: error.message})
+        console.log('Validation Error block')
+        return response.status(400).json({ error: error.message });
     }
+    
     next(error)
 }
 
