@@ -119,7 +119,7 @@ app.put(`/api/notes/:id`, (request, response, next) => {
         // date: request.body.date
     }
 
-    Note.findByIdAndUpdate(id, updatedNote)
+    Note.findByIdAndUpdate(id, updatedNote, { runValidators: true, new: true})
         .then(returnedNote => {
             if (returnedNote) {
                 response.json(returnedNote);
