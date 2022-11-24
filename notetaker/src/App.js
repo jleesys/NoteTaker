@@ -77,7 +77,14 @@ function App() {
     )
     setNotesToShow(notes);
 
-    notesServices.putUpdate(newNote, id).catch(err => console.log('oopsy woopsy', err));
+    notesServices.putUpdate(newNote, id)
+      .then(response => response)
+      .catch(err => {
+        console.log('oopsy woopsy', err);
+        setMessage("Error: Could not update the specified item. Item may no longer exist.")
+        setTimeout(() => setMessage(null), 5000)
+        return;
+      });
     setMessage("Note has been updated!")
     setTimeout(() => setMessage(null), 5000)
   }

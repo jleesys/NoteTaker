@@ -35,9 +35,9 @@ const putUpdate = (newObject, id) => {
     const request = axios
         .put(`${url}/${id}`, newObject)
         .then(response => response.data)
-        .catch(err => {
-            console.log('failed to update note...');
-        })
+        // .catch(err => {
+        //     console.log('failed to update note...');
+        // })
     console.log(`id ${id} has been putted :)`)
     return request;
 }
@@ -46,9 +46,9 @@ const remove = (id) => {
     console.log(`removing object id ${id}`)
     const request = axios
         .delete(`${url}/${id}`)
-        .catch(err => {
-            console.log('error deleting note...')
-        })
+        // .catch(err => {
+        //     console.log('error deleting note...')
+        // })
     return request;
 }
 export default { getAll, postNew, putUpdate, remove }
