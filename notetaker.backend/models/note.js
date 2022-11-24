@@ -1,5 +1,6 @@
-const mongoose = require('mongoose')
-require('dotenv').config()
+/* eslint-disable no-undef */
+const mongoose = require('mongoose');
+require('dotenv').config();
 
 const url = process.env.MONGODB_URL;
 
@@ -15,15 +16,15 @@ const noteSchema = new mongoose.Schema({
         required: true
     },
     important: Boolean
-})
+});
 
 noteSchema.set('toJSON', {
     transform: (document, returnedObject) => {
-        returnedObject.id = returnedObject._id.toString()
-        delete returnedObject._id
-        delete returnedObject.__v
+        returnedObject.id = returnedObject._id.toString();
+        delete returnedObject._id;
+        delete returnedObject.__v;
     }
-})
+});
 
 // create model
 const Note = mongoose.model('Note', noteSchema);
@@ -31,12 +32,12 @@ const Note = mongoose.model('Note', noteSchema);
 console.log(url);
 mongoose
     .connect(url)
-    .then(result => {
-        console.log(`connecting to url ${url}`)
-        console.log(`connection success`)
+    .then( () => {
+        console.log(`connecting to url ${url}`);
+        console.log(`connection success`);
     })
     .catch(err => {
-        console.log(`woops, connection failed : `, err)
-    })
+        console.log(`woops, connection failed : `, err);
+    });
 
-module.exports = Note
+module.exports = Note;
