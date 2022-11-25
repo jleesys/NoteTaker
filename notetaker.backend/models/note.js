@@ -1,10 +1,6 @@
 /* eslint-disable no-undef */
 const mongoose = require('mongoose');
-require('dotenv').config();
 
-const url = process.env.MONGODB_URL;
-
-// create schema
 const noteSchema = new mongoose.Schema({
     content: {
         type: String,
@@ -26,18 +22,4 @@ noteSchema.set('toJSON', {
     }
 });
 
-// create model
-const Note = mongoose.model('Note', noteSchema);
-
-console.log(url);
-mongoose
-    .connect(url)
-    .then( () => {
-        console.log(`connecting to url ${url}`);
-        console.log(`connection success`);
-    })
-    .catch(err => {
-        console.log(`woops, connection failed : `, err);
-    });
-
-module.exports = Note;
+module.exports = mongoose.model('Note', noteSchema);
