@@ -7,6 +7,7 @@ const Note = require('../models/note');
 notesRouter.get(`/`, (request, response, next) => {
     Note.find({})
         .then(notes => {
+            console.log('Trying to fetch all notes...')
             response.json(notes);
         })
         .catch(err => {
