@@ -9,20 +9,20 @@ const initialNotes = [
     {
         content: 'Make glasses appointment',
         important: true,
-        date: '2022-11-21T02:29:01.604Z',
-        id: '637ae26d2431991d8bbe3127'
+        date: '2022-11-21T02:29:01.604Z'
+        // id: '637ae26d2431991d8bbe3127'
     },
     {
         content: 'Make dermatologist appointment',
         important: true,
-        date: '2022-11-21T02:29:01.604Z',
-        id: '6380125c35552aa96081bc5d'
+        date: '2022-11-21T02:29:01.604Z'
+        // id: '6380125c35552aa96081bc5d'
     },
     {
         content: 'Order dinner',
         important: false,
-        date: '2022-11-21T02:29:01.604Z',
-        id: '6382f4f261ea8e89da980d44'
+        date: '2022-11-21T02:29:01.604Z'
+        // id: '6382f4f261ea8e89da980d44'
     }
 ];
 
@@ -43,16 +43,30 @@ describe('notes api', () => {
             .expect(200)
             .expect('Content-Type', /application\/json/);
     });
-    test('there are three notes', async () => {
+    // test('there are three notes', async () => {
+    //     const response = await api.get('/api/notes');
+
+    //     expect(response.body).toHaveLength(3);
+    // });
+    test('all notes are returned', async () => {
         const response = await api.get('/api/notes');
 
-        expect(response.body).toHaveLength(3);
+        // expect(response.body.length).toBe(initialNotes.length);
+        expect(response.body).toHaveLength(initialNotes.length);
     });
-    test('first note is about glasses appt', async () => {
+
+    test('contains note about glasses appointment', async () => {
         const response = await api.get('/api/notes');
 
-        expect(response.body[0].content).toBe('Make glasses appointment');
-    });
+        const contents = response.body.map(note => note.content);
+        expect(contents).toContain('Make glasses appointment');
+    })
+
+    // test('first note is about glasses appt', async () => {
+    //     const response = await api.get('/api/notes');
+
+    //     expect(response.body[0].content).toBe('Make glasses appointment');
+    // });
 });
 
 afterAll(() => {
