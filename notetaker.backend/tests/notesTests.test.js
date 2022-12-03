@@ -1,8 +1,40 @@
 const mongoose = require('mongoose');
 const supertest = require('supertest');
+const Note = require('../models/note');
 const app = require('../app');
 
 const api = supertest(app);
+
+const initialNotes = [
+    {
+        content: 'Make glasses appointment',
+        important: true,
+        date: '2022-11-21T02:29:01.604Z',
+        id: '637ae26d2431991d8bbe3127'
+    },
+    {
+        content: 'Make dermatologist appointment',
+        important: true,
+        date: '2022-11-21T02:29:01.604Z',
+        id: '6380125c35552aa96081bc5d'
+    },
+    {
+        content: 'Order dinner',
+        important: false,
+        date: '2022-11-21T02:29:01.604Z',
+        id: '6382f4f261ea8e89da980d44'
+    }
+];
+
+beforeEach(async () => {
+    await Note.deleteMany({});
+    let noteObject = new Note(initialNotes[0]);
+    await noteObject.save();
+    noteObject = new Note(initialNotes[1]);
+    await noteObject.save();
+    noteObject = new Note(initialNotes[2]);
+    await noteObject.save();
+});
 
 describe('notes api', () => {
     test('notes are returned as json', async () => {
