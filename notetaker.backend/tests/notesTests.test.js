@@ -11,6 +11,16 @@ describe('notes api', () => {
             .expect(200)
             .expect('Content-Type', /application\/json/);
     });
+    test('there are three notes', async () => {
+        const response = await api.get('/api/notes');
+
+        expect(response.body).toHaveLength(3);
+    });
+    test('first note is about glasses appt', async () => {
+        const response = await api.get('/api/notes');
+
+        expect(response.body[0].content).toBe('Make glasses appointment');
+    });
 });
 
 afterAll(() => {
