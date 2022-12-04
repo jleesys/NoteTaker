@@ -18,21 +18,32 @@ notesRouter.get(`/`, async (request, response, next) => {
     //     });
 });
 
-notesRouter.get(`/:id`, (request, response, next) => {
+notesRouter.get(`/:id`, async (request, response, next) => {
     const idToGet = request.params.id;
 
-    Note.findById(idToGet)
-        .then(gotDoc => {
-            console.log(`GOT ${gotDoc}`);
-            if (gotDoc) {
-                response.json(gotDoc);
-            } else {
-                response.status(404).end();
-            }
-        })
-        .catch(err => {
-            next(err);
-        });
+    try {
+        const note = await Note.findById(idToGet);
+        if (note) {
+            response.json(note);
+        } else {
+            response.status(404).end();
+        }
+    } catch (exception) {
+        next(exception);
+    }
+
+    // Note.findById(idToGet)
+    //     .then(gotDoc => {
+    //         console.log(`GOT ${gotDoc}`);
+    //         if (gotDoc) {
+    //             response.json(gotDoc);
+    //         } else {
+    //             response.status(404).end();
+    //         }
+    //     })
+    //     .catch(err => {
+    //         next(err);
+    //     });
 
 });
 
@@ -47,7 +58,7 @@ notesRouter.post(`/`, async (request, response, next) => {
     try {
         const savedNote = await noteToAdd.save();
         response.status(201).json(savedNote);
-    } catch(exception) {
+    } catch (exception) {
         next(exception);
     }
 
@@ -85,20 +96,30 @@ notesRouter.put(`/:id`, (request, response, next) => {
         });
 });
 
-notesRouter.delete(`/:id`, (request, response) => {
+notesRouter.delete(`/:id`, async (request, response, next) => {
     const id = request.params.id;
-    Note.findByIdAndDelete(id)
-        .then(deletedDoc => {
-            if (deletedDoc) {
-                response.status(204).json(deletedDoc);
-            } else {
-                response.status(404).send({ 'error': 'could not find requested id' });
-            }
-        })
-        .catch(err => {
-            logger.error('Failed to delete specified doc.');
-            response.status(400).send({ 'error': 'failed to delete' });
-        });
+
+    try {
+        const deletedNote = await Note.findByIdAndDelete(id);
+        // response.status(204).end();
+        response.status(204).json(deletedNote);
+    } catch (exception) {
+        next(exception);
+    }
+
+
+    // Note.findByIdAndDelete(id)
+    //     .then(deletedDoc => {
+    //         if (deletedDoc) {
+    //             response.status(204).json(deletedDoc);
+    //         } else {
+    //             response.status(404).send({ 'error': 'could not find requested id' });
+    //         }
+    //     })
+    //     .catch(err => {
+    //         logger.error('Failed to delete specified doc.');
+    //         response.status(400).send({ 'error': 'failed to delete' });
+    //     });
 
 });
 

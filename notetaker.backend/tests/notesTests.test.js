@@ -30,12 +30,26 @@ const api = supertest(app);
 
 beforeEach(async () => {
     await Note.deleteMany({});
-    let noteObject = new Note(initialNotes[0]);
-    await noteObject.save();
-    noteObject = new Note(initialNotes[1]);
-    await noteObject.save();
-    noteObject = new Note(initialNotes[2]);
-    await noteObject.save();
+
+    // method 3
+    const arrayNoteObjs = initialNotes.map(note => new Note(note));
+    const arrayPromises = arrayNoteObjs.map(noteObj => noteObj.save());
+
+    await Promise.all(arrayPromises);
+
+    // method 2
+    // for (let note of initialNotes) {
+    //     let noteObject = new Note(note);
+    //     await noteObject.save();
+    // }
+
+    // method 1
+    // let noteObject = new Note(initialNotes[0]);
+    // await noteObject.save();
+    // noteObject = new Note(initialNotes[1]);
+    // await noteObject.save();
+    // noteObject = new Note(initialNotes[2]);
+    // await noteObject.save();
 });
 
 describe('notes api', () => {
