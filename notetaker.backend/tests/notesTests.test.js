@@ -2,29 +2,31 @@ const mongoose = require('mongoose');
 const supertest = require('supertest');
 const Note = require('../models/note');
 const app = require('../app');
+const { initialNotes } = require('./test_helper');
+const helper = require('./test_helper');
 
 const api = supertest(app);
 
-const initialNotes = [
-    {
-        content: 'Make glasses appointment',
-        important: true,
-        date: '2022-11-21T02:29:01.604Z'
-        // id: '637ae26d2431991d8bbe3127'
-    },
-    {
-        content: 'Make dermatologist appointment',
-        important: true,
-        date: '2022-11-21T02:29:01.604Z'
-        // id: '6380125c35552aa96081bc5d'
-    },
-    {
-        content: 'Order dinner',
-        important: false,
-        date: '2022-11-21T02:29:01.604Z'
-        // id: '6382f4f261ea8e89da980d44'
-    }
-];
+// const initialNotes = [
+//     {
+//         content: 'Make glasses appointment',
+//         important: true,
+//         date: '2022-11-21T02:29:01.604Z'
+//         // id: '637ae26d2431991d8bbe3127'
+//     },
+//     {
+//         content: 'Make dermatologist appointment',
+//         important: true,
+//         date: '2022-11-21T02:29:01.604Z'
+//         // id: '6380125c35552aa96081bc5d'
+//     },
+//     {
+//         content: 'Order dinner',
+//         important: false,
+//         date: '2022-11-21T02:29:01.604Z'
+//         // id: '6382f4f261ea8e89da980d44'
+//     }
+// ];
 
 beforeEach(async () => {
     await Note.deleteMany({});
@@ -78,6 +80,51 @@ describe('notes api', () => {
         const contents = response.body.map(note => note.content);
         expect(response.body).toHaveLength(initialNotes.length + 1);
         expect(contents).toContain('async/await simplifies making async calls');
+    });
+
+    test('a note without content is not added', async () => {
+        const newNote = {
+            important: true
+        };
+
+        await api
+            .post('/api/notes')
+            .send(newNote)
+            .expect(400);
+    
+        const response = await api.get('/api/notes');
+        expect(response.body).toHaveLength(initialNotes.length);
+    });
+
+    test('a specific note can be viewed', async () => {
+        const notesAtStart = await helper.notesInDb();
+
+        const noteToView = notesAtStart[0];
+
+        const resultNote = await api
+            .get(`/api/notes/${noteToView.id}`)
+            .expect(200)
+            .expect('Content-Type', /application\/json/);
+
+        const processedNoteToView = JSON.parse(JSON.stringify(noteToView));
+
+        expect(resultNote.body).toEqual(processedNoteToView);
+    });
+
+    test('note can be deleted', async () => {
+        const notesAtStart = await helper.notesInDb();
+        const noteToDelete = notesAtStart[0];
+
+        await api
+            .delete(`/api/notes/${noteToDelete.id}`)
+            .expect(204);
+
+        const notesAtEnd = await helper.notesInDb();
+
+        expect(notesAtEnd).toHaveLength(helper.initialNotes.length - 1);
+
+        const contents = notesAtEnd.map(note => note.content);
+        expect(contents).not.toContain(noteToDelete.content);
     });
 });
 

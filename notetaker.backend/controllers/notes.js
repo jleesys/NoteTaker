@@ -36,18 +36,32 @@ notesRouter.get(`/:id`, (request, response, next) => {
 
 });
 
-notesRouter.post(`/`, (request, response, next) => {
+notesRouter.post(`/`, async (request, response, next) => {
+
     const noteToAdd = new Note({
         content: request.body.content,
         important: request.body.important,
         date: new Date()
     });
 
-    noteToAdd.save()
-        .then(result => {
-            response.status(201).json(result);
-        })
-        .catch(err => next(err));
+    try {
+        const savedNote = await noteToAdd.save();
+        response.status(201).json(savedNote);
+    } catch(exception) {
+        next(exception);
+    }
+
+    // const noteToAdd = new Note({
+    //     content: request.body.content,
+    //     important: request.body.important,
+    //     date: new Date()
+    // });
+
+    // noteToAdd.save()
+    //     .then(result => {
+    //         response.status(201).json(result);
+    //     })
+    //     .catch(err => next(err));
 
 });
 
@@ -76,7 +90,7 @@ notesRouter.delete(`/:id`, (request, response) => {
     Note.findByIdAndDelete(id)
         .then(deletedDoc => {
             if (deletedDoc) {
-                response.json(deletedDoc);
+                response.status(204).json(deletedDoc);
             } else {
                 response.status(404).send({ 'error': 'could not find requested id' });
             }
