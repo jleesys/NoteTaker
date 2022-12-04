@@ -4,15 +4,18 @@ const notesRouter = require('express').Router();
 const logger = require('../utils/logger');
 const Note = require('../models/note');
 
-notesRouter.get(`/`, (request, response, next) => {
-    Note.find({})
-        .then(notes => {
-            logger.info('Trying to fetch all notes...');
-            response.json(notes);
-        })
-        .catch(err => {
-            next(err);
-        });
+// get all notes
+notesRouter.get(`/`, async (request, response, next) => {
+    const notes = await Note.find({});
+    response.json(notes);
+    // Note.find({})
+    //     .then(notes => {
+    //         logger.info('Trying to fetch all notes...');
+    //         response.json(notes);
+    //     })
+    //     .catch(err => {
+    //         next(err);
+    //     });
 });
 
 notesRouter.get(`/:id`, (request, response, next) => {
@@ -42,7 +45,7 @@ notesRouter.post(`/`, (request, response, next) => {
 
     noteToAdd.save()
         .then(result => {
-            response.json(result);
+            response.status(201).json(result);
         })
         .catch(err => next(err));
 

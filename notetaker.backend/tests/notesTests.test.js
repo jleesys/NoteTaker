@@ -60,13 +60,25 @@ describe('notes api', () => {
 
         const contents = response.body.map(note => note.content);
         expect(contents).toContain('Make glasses appointment');
-    })
+    });
 
-    // test('first note is about glasses appt', async () => {
-    //     const response = await api.get('/api/notes');
+    test('a valid note can be added', async () => {
+        const newNote = {
+            content: 'async/await simplifies making async calls',
+            important:true,
+        };
 
-    //     expect(response.body[0].content).toBe('Make glasses appointment');
-    // });
+        await api
+            .post('/api/notes')
+            .send(newNote)
+            .expect(201)
+            .expect('Content-Type', /application\/json/);
+
+        const response = await api.get('/api/notes');
+        const contents = response.body.map(note => note.content);
+        expect(response.body).toHaveLength(initialNotes.length + 1);
+        expect(contents).toContain('async/await simplifies making async calls');
+    });
 });
 
 afterAll(() => {
