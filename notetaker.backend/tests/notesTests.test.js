@@ -59,23 +59,25 @@ describe('notes api', () => {
             .expect(200)
             .expect('Content-Type', /application\/json/);
     });
-    // test('there are three notes', async () => {
-    //     const response = await api.get('/api/notes');
 
-    //     expect(response.body).toHaveLength(3);
-    // });
     test('all notes are returned', async () => {
-        const response = await api.get('/api/notes');
+        // const response = await api.get('/api/notes');
+
+        const response = await helper.notesInDb();
+        expect(response).toHaveLength(helper.initialNotes.length);
 
         // expect(response.body.length).toBe(initialNotes.length);
-        expect(response.body).toHaveLength(initialNotes.length);
+        // expect(response.body).toHaveLength(initialNotes.length);
     });
 
     test('contains note about glasses appointment', async () => {
-        const response = await api.get('/api/notes');
-
-        const contents = response.body.map(note => note.content);
+        const notesReturned = await helper.notesInDb();
+        const contents = notesReturned.map(note => note.content);
         expect(contents).toContain('Make glasses appointment');
+        // const response = await api.get('/api/notes');
+
+        // const contents = response.body.map(note => note.content);
+        // expect(contents).toContain('Make glasses appointment');
     });
 
     test('a valid note can be added', async () => {
@@ -90,10 +92,16 @@ describe('notes api', () => {
             .expect(201)
             .expect('Content-Type', /application\/json/);
 
-        const response = await api.get('/api/notes');
-        const contents = response.body.map(note => note.content);
-        expect(response.body).toHaveLength(initialNotes.length + 1);
-        expect(contents).toContain('async/await simplifies making async calls');
+        const notesAtEnd = await helper.notesInDb();
+        const noteContents = notesAtEnd.map(note => note.content);
+
+        expect(notesAtEnd).toHaveLength(helper.initialNotes.length +1);
+        expect(noteContents).toContain('async/await simplifies making async calls');
+
+        // const response = await api.get('/api/notes');
+        // const contents = response.body.map(note => note.content);
+        // expect(response.body).toHaveLength(initialNotes.length + 1);
+        // expect(contents).toContain('async/await simplifies making async calls');
     });
 
     test('a note without content is not added', async () => {
@@ -106,8 +114,11 @@ describe('notes api', () => {
             .send(newNote)
             .expect(400);
     
-        const response = await api.get('/api/notes');
-        expect(response.body).toHaveLength(initialNotes.length);
+        const notesAtEnd = await helper.notesInDb();
+
+        expect(notesAtEnd).toHaveLength(helper.initialNotes.length);
+        // const response = await api.get('/api/notes');
+        // expect(response.body).toHaveLength(initialNotes.length);
     });
 
     test('a specific note can be viewed', async () => {
