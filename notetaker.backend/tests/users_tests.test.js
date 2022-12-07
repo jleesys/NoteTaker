@@ -32,14 +32,34 @@ describe('when there is initially one user in db', () => {
             .expect('Content-Type', /application\/json/);
 
         const usersAtEnd = await helper.usersInDb();
-        console.log(usersAtEnd);
-        console.log(usersAtEnd[0]);
-        console.log(usersAtEnd[0].username);
         expect(usersAtEnd).toHaveLength(usersAtStart.length +1 );
 
         const usernames = usersAtEnd.map(u => u.username);
 
-        console.log(usernames);
+        // console.log(usernames);
         expect(usernames).toContain(newUser.username);
+    });
+
+    test('creation fails with proper statuscode and message if username is already taken', async () => {
+        const usersAtStart = await helper.usersInDb();
+        console.log(usersAtStart);
+        const newUser = {
+            username: 'root',
+            name: 'Superuser',
+            password: 'salainen'
+        };
+
+        // console.log(newUser);
+
+        const result = await api
+            .post('/api/users')
+            .send(newUser)
+            .expect(400)
+            .expect('Content-Type', /application\/json/);
+
+        expect(result.body.error).toContain('username must be unique');
+        const usersAtEnd = await helper.usersInDb();
+        expect(usersAtEnd).toHaveLength(usersAtStart.length);
+        expect(usersAtEnd).toEqual(usersAtStart);
     });
 });
