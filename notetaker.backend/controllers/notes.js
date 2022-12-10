@@ -3,6 +3,7 @@
 const notesRouter = require('express').Router();
 const logger = require('../utils/logger');
 const Note = require('../models/note');
+const User = require('../models/user');
 
 // get all notes
 notesRouter.get(`/`, async (request, response, next) => {
@@ -49,14 +50,29 @@ notesRouter.get(`/:id`, async (request, response, next) => {
 
 notesRouter.post(`/`, async (request, response, next) => {
 
-    const noteToAdd = new Note({
-        content: request.body.content,
-        important: request.body.important,
-        date: new Date()
-    });
+    // const body = request.body;
+    // const user = await User.findById(body.userId);
+
+    // const noteToAdd = new Note({
+    //     content: request.body.content,
+    //     important: request.body.important,
+    //     date: new Date(),
+    //     user: user._id
+    // });
 
     try {
+        const body = request.body;
+        const user = await User.findById(body.userId);
+
+        const noteToAdd = new Note({
+            content: request.body.content,
+            important: request.body.important,
+            date: new Date(),
+            user: user._id
+        });
         const savedNote = await noteToAdd.save();
+        user.notes = user.notes.concat(savedNote._id);
+        await user.save();
         response.status(201).json(savedNote);
     } catch (exception) {
         next(exception);
