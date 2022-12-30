@@ -50,16 +50,6 @@ notesRouter.get(`/:id`, async (request, response, next) => {
 
 notesRouter.post(`/`, async (request, response, next) => {
 
-    // const body = request.body;
-    // const user = await User.findById(body.userId);
-
-    // const noteToAdd = new Note({
-    //     content: request.body.content,
-    //     important: request.body.important,
-    //     date: new Date(),
-    //     user: user._id
-    // });
-
     try {
         const body = request.body;
         const user = await User.findById(body.userId);
