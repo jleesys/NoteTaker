@@ -36,8 +36,9 @@ beforeEach(async () => {
     // method 3
     const arrayNoteObjs = initialNotes.map(note => new Note(note));
     const arrayPromises = arrayNoteObjs.map(noteObj => noteObj.save());
-    const testUser = new User( { username: 'jblow', name: 'joe blow', passwordHash: 'testhash123' } );
-    const returnedUser = await testUser.save();
+    const testUser = new User({ username: 'jblow', name: 'joe blow', passwordHash: 'testhash123' });
+    await testUser.save();
+    // const returnedUser = await testUser.save();
     // const testUserId = returnedUser._id;
     // console.log(testUserId);
 
@@ -87,11 +88,11 @@ describe('notes api', () => {
     });
 
     test('a valid note can be added', async () => {
-        const testUser = await User.findOne( { username: 'jblow' });
+        const testUser = await User.findOne({ username: 'jblow' });
 
         const newNote = {
             content: 'async/await simplifies making async calls',
-            important:true,
+            important: true,
             userId: testUser._id
         };
         if (newNote) console.log('created note');
@@ -106,7 +107,7 @@ describe('notes api', () => {
         const notesAtEnd = await helper.notesInDb();
         const noteContents = notesAtEnd.map(note => note.content);
 
-        expect(notesAtEnd).toHaveLength(helper.initialNotes.length +1);
+        expect(notesAtEnd).toHaveLength(helper.initialNotes.length + 1);
         expect(noteContents).toContain('async/await simplifies making async calls');
 
         // const response = await api.get('/api/notes');
@@ -116,7 +117,7 @@ describe('notes api', () => {
     });
 
     test('a note without content is not added', async () => {
-        const testUser = await User.findOne( { username: 'jblow' } );
+        const testUser = await User.findOne({ username: 'jblow' });
         const newNote = {
             important: true,
             userId: testUser._id
@@ -126,7 +127,7 @@ describe('notes api', () => {
             .post('/api/notes')
             .send(newNote)
             .expect(400);
-    
+
         const notesAtEnd = await helper.notesInDb();
 
         expect(notesAtEnd).toHaveLength(helper.initialNotes.length);
