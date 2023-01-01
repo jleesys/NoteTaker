@@ -1,9 +1,11 @@
 const mongoose = require('mongoose');
 const supertest = require('supertest');
 const Note = require('../models/note');
+const User = require('../models/user');
 const app = require('../app');
 const { initialNotes } = require('./test_helper');
 const helper = require('./test_helper');
+const { json } = require('express');
 
 const api = supertest(app);
 
@@ -34,6 +36,10 @@ beforeEach(async () => {
     // method 3
     const arrayNoteObjs = initialNotes.map(note => new Note(note));
     const arrayPromises = arrayNoteObjs.map(noteObj => noteObj.save());
+    const testUser = new User( { username: 'jblow', name: 'joe blow', passwordHash: 'testhash123' } );
+    const returnedUser = await testUser.save();
+    // const testUserId = returnedUser._id;
+    // console.log(testUserId);
 
     await Promise.all(arrayPromises);
 
@@ -81,10 +87,15 @@ describe('notes api', () => {
     });
 
     test('a valid note can be added', async () => {
+        const testUser = await User.findOne( { username: 'jblow' });
+
         const newNote = {
             content: 'async/await simplifies making async calls',
             important:true,
+            userId: testUser._id
         };
+        if (newNote) console.log('created note');
+        console.log(newNote);
 
         await api
             .post('/api/notes')
@@ -105,8 +116,10 @@ describe('notes api', () => {
     });
 
     test('a note without content is not added', async () => {
+        const testUser = await User.findOne( { username: 'jblow' } );
         const newNote = {
-            important: true
+            important: true,
+            userId: testUser._id
         };
 
         await api
