@@ -4,6 +4,8 @@ const notesRouter = require('express').Router();
 const logger = require('../utils/logger');
 const Note = require('../models/note');
 const User = require('../models/user');
+const jwt = require('jsonwebtoken');
+require('dotenv').config();
 
 // get all notes
 notesRouter.get(`/`, async (request, response, next) => {
@@ -48,11 +50,33 @@ notesRouter.get(`/:id`, async (request, response, next) => {
 
 });
 
+const getTokenFrom = (request) => {
+    // grabs auth header
+    const authorization = request.get('authorization');
+    // if auth header exists and it starts with bearer, return the second part of header (token)
+    if (authorization && authorization.toLowerCase().startsWith('bearer ')) {
+        return authorization.substring(7);
+    } else {
+        // else return null
+        return null;
+    }
+};
+
 notesRouter.post(`/`, async (request, response, next) => {
 
     try {
         const body = request.body;
-        const user = await User.findById(body.userId);
+        // VERIFY A TOKEN BEFORE TAKING ANY ACTION
+        const token = getTokenFrom(request);
+        // verifies token is valid and returns the object within token
+        const decodedToken = jwt.verify(token, process.env.SECRET);
+        // if the user id does not exist in the decoded token, return invalid msg
+        if (!decodedToken.id) {
+            return response.status(401).json({ error: 'token missing or invalid' });
+        }
+
+        // const user = await User.findById(body.userId);
+        const user = await User.findById(decodedToken.id);
 
         const noteToAdd = new Note({
             content: request.body.content,
