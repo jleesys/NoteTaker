@@ -18,10 +18,16 @@ const errorHandler = (error, request, response, next) => {
 
     if (error.name === 'ValidationError') {
         logger.error('');
-        response.status(400).json({ error: 'Bad id.' });
+        response.status(400).json({ error: error.message });
     } else if (error.name === 'CastError') {
         logger.error('');
         response.status(400).json({ error: 'Bad id.' });
+    } else if (error.name === 'JsonWebTokenError') {
+        logger.error('');
+        response.status(400).json({ error: 'invalid token.' });
+    } else if (error.name === 'TokenExpiredError') {
+        logger.error('');
+        response.status(400).json({ error: 'token expired.' });
     }
 
     next(error);
